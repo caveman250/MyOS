@@ -1,0 +1,10 @@
+// Workspace settings
+{
+    "files.exclude": {
+        "**/*.o": true,
+        "**/*.bin": true,
+        ".vscode":true,
+        "isodir":true,
+        "**/*.iso":true
+    }
+}
