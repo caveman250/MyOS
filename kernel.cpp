@@ -106,6 +106,14 @@ void WriteString(const char* data)
 extern "C" void kernel_main(void) 
 {
 	InitTerminal();
- 
-	WriteString("Hello, kernel World!\nThis should be at the start of the second line");
+        
+	WriteString("\n\n\n\n\n\n\n\n"); 
+	WriteString("                          ___  ___        _____ _____ \n");
+	WriteString("                          |  \\/  |       |  _  /  ___|\n");
+	WriteString("                          | .  . |_   _  | | | \\ `--. \n");
+	WriteString("                          | |\\/| | | | | | | | |`--. \\\n");
+	WriteString("                          | |  | | |_| | \\ \\_/ /\\__/ /\n");
+	WriteString("                          \\_|  |_/\\__, |  \\___/\\____/ \n");
+	WriteString("                                   __/ |              \n");
+	WriteString("                                  |___/               \n");
 }
