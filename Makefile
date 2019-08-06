@@ -1,14 +1,14 @@
 AS = nasm
 AS_FLAGS = -felf32
 
-GPP = ~/Desktop/gcc_cross_compiler/bin/i686-elf-g++
+GPP = i686-elf-g++
 GPP_COMPILE_FLAGS = -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 GPP_LINK_FLAGS = -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
 
-image: link
+image: myos.bin
 	sh ./create_iso.sh
 
-link: kernel.o boot.o
+myos.bin: kernel.o boot.o
 	$(GPP) -T linker.ld -o myos.bin $(GPP_LINK_FLAGS)
 
 run: image

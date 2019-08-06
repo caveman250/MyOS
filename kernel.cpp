@@ -77,6 +77,13 @@ void PutEntryAt(char c, uint8_t color, size_t x, size_t y)
  
 void PutChar(char c) 
 {
+	if(c == '\n')
+	{
+		terminal_row++;
+		terminal_column = 0;
+		return;
+	}
+
 	PutEntryAt(c, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
@@ -100,5 +107,5 @@ extern "C" void kernel_main(void)
 {
 	InitTerminal();
  
-	WriteString("Hello, kernel World!\n");
+	WriteString("Hello, kernel World!\nThis should be at the start of the second line");
 }
