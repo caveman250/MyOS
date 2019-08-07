@@ -4,4 +4,8 @@
 isodir/
 *.swp
 *.swo
+*.d
+sysroot
+*.a
+
 
