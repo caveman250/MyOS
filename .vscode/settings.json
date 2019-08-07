@@ -6,5 +6,10 @@
         ".vscode":true,
         "isodir":true,
         "**/*.iso":true
+    },
+    "files.associations": {
+        "MEMCMP.C": "cpp",
+        "memcmp.C": "cpp",
+        "terminal.h": "c"
     }
 }

@@ -1,29 +1,25 @@
-AS = nasm
-AS_FLAGS = -felf32
+SYSROOT=$(shell pwd)/sysroot
 
-GPP = i686-elf-g++
-GPP_COMPILE_FLAGS = -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
-GPP_LINK_FLAGS = -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
-
-image: myos.bin
-	sh ./create_iso.sh
-
-myos.bin: kernel.o boot.o
-	$(GPP) -T linker.ld -o myos.bin $(GPP_LINK_FLAGS)
+build: headers
+	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install && cd ../
+	cd kernel && SYSROOT=$(SYSROOT) $(MAKE) install && cd ../
 
 run: image
 	qemu-system-i386 -cdrom myos.iso
 
+headers:
+	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers
+	cd kernel && SYSROOT=$(SYSROOT) $(MAKE) install-headers
+
+image: build
+	sh create_iso.sh
+
 .PHONY: clean
 
 clean:
-	rm -f ./*.bin
-	rm -f ./*.o
-	rm -f ./*.iso
-	rm -f -R ./isodir
+	cd libc && $(MAKE) clean && cd ../
+	cd kernel && $(MAKE) clean && cd ../
 
-%.o: %.cpp
-	$(GPP) -c $< -o $@ $(GPP_COMPILE_FLAGS)
-	
-%.o: %.asm
-	$(AS) $(AS_FLAGS) $< -o $@
+	rm -rf sysroot
+	rm -rf isodir
+	rm -rf myos.iso
