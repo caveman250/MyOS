@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "Vga.h"
+#include <kernel/sys/io.h>
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -59,12 +60,24 @@ void terminal_putchar(char c)
     }
 }
 
+void terminal_updatecursor(int x, int y)
+{
+	uint16_t pos = y * VGA_WIDTH + x;
+ 
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
 void terminal_write(const char* data, size_t size) 
 {
     for (size_t i = 0; i < size; i++)
     {
         terminal_putchar(data[i]);
     }
+
+    terminal_updatecursor(terminal_column, terminal_row);
 }
 
 void terminal_writestring(const char* data) 
