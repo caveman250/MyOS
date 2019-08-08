@@ -3,9 +3,14 @@
 
 #include <stddef.h>
 
-void terminal_init(void);
-void terminal_putchar(char c);
-void terminal_write(const char* data, size_t size);
-void termnal_writestring(const char* data);
+namespace kernel::terminal
+{
+    void Init(void);
+    void PutChar(char c);
+    void Write(const char* data, size_t size);
+    void WriteString(const char* data);
+}
+
+extern "C" void terminal_write(const char* data, size_t size);
 
 #endif

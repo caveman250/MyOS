@@ -3,33 +3,35 @@
 
 #include <stdint.h>
 
-enum vga_colour {
-    VGA_COLOR_BLACK = 0,
-    VGA_COLOR_BLUE = 1,
-    VGA_COLOR_GREEN = 2,
-    VGA_COLOR_CYAN = 3,
-    VGA_COLOR_RED = 4,
-    VGA_COLOR_MAGENTA = 5,
-    VGA_COLOR_BROWN = 6,
-    VGA_COLOR_LIGHT_GREY = 7,
-    VGA_COLOR_DARK_GREY = 8,
-    VGA_COLOR_LIGHT_BLUE = 9,
-    VGA_COLOR_LIGHT_GREEN = 10,
-    VGA_COLOR_LIGHT_CYAN = 11,
-    VGA_COLOR_LIGHT_RED = 12,
-    VGA_COLOR_LIGHT_MAGENTA = 13,
-    VGA_COLOR_LIGHT_BROWN = 14,
-    VGA_COLOR_WHITE = 15,
-};
-
-static inline uint8_t vga_createcolour(enum vga_colour fg, enum vga_colour bg) 
+namespace kernel::vga
 {
-    return fg | bg << 4;
-}
+    enum Colour {
+        COLOUR_BLACK = 0,
+        COLOUR_BLUE = 1,
+        COLOUR_GREEN = 2,
+        COLOUR_CYAN = 3,
+        COLOUR_RED = 4,
+        COLOUR_MAGENTA = 5,
+        COLOUR_BROWN = 6,
+        COLOUR_LIGHT_GREY = 7,
+        COLOUR_DARK_GREY = 8,
+        COLOUR_LIGHT_BLUE = 9,
+        COLOUR_LIGHT_GREEN = 10,
+        COLOUR_LIGHT_CYAN = 11,
+        COLOUR_LIGHT_RED = 12,
+        COLOUR_LIGHT_MAGENTA = 13,
+        COLOUR_LIGHT_BROWN = 14,
+        COLOUR_WHITE = 15,
+    };
 
-static inline uint16_t vga_entry(unsigned char uc, uint8_t colour) 
-{
-    return (uint16_t) uc | (uint16_t) colour << 8;
-}
+    static inline uint8_t CreateColour(enum Colour fg, enum Colour bg) 
+    {
+        return fg | bg << 4;
+    }
 
+    static inline uint16_t Entry(unsigned char uc, uint8_t colour) 
+    {
+        return (uint16_t) uc | (uint16_t) colour << 8;
+    }
+}
 #endif
