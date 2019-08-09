@@ -6,7 +6,6 @@
 #endif
 
 #include <stdint.h>
-#include <kernel/hal/Regs.h>
 
 namespace kernel
 {
