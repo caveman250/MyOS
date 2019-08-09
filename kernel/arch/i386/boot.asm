@@ -26,8 +26,8 @@ _start:
 	;point the esp register to the top of the stack
 	mov esp, stack_top
  
-	;extern _init
-	;call _init
+	extern _init
+	call _init
 
 	;call kernel_main in kernel.c. this will only work if the stack is still 16 bit aligned, 
 	;since nothing has been pushed to the stack we are ok.

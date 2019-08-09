@@ -12,7 +12,17 @@ CC = i686-elf-gcc --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
 
 ARCHDIR = arch/i386
 
-KERNEL_OBJS = kernel/kernel.o $(ARCHDIR)/boot.o $(ARCHDIR)/Terminal.o
+KERNEL_OBJS=\
+kernel/kernel.o\
+$(ARCHDIR)/boot.o \
+$(ARCHDIR)/kernel/Terminal.o \
+$(ARCHDIR)/kernel/hal/HAL.o \
+$(ARCHDIR)/kernel/hal/HAL_ASM.o \
+$(ARCHDIR)/kernel/hal/GDT.o \
+$(ARCHDIR)/kernel/hal/GDT_ASM.o \
+$(ARCHDIR)/kernel/hal/IDT.o \
+$(ARCHDIR)/kernel/hal/IDT_ASM.o \
+$(ARCHDIR)/kernel/hal/CPU.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \

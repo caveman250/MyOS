@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include <kernel/Terminal.h>
+#include <kernel/hal/HAL.h>
  
 int i = 100;
 
@@ -23,5 +24,8 @@ namespace kernel
 		printf("global variable 'i' as hex:     [0x%x]\n", i);
 		const char* str = "this is a const char*";
 		printf("local variable 'str':           [%s]\n", str);
+
+		HAL::Initialise();
+		Geninterrupt();
 	}
 }
