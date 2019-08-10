@@ -4,6 +4,7 @@
 #include <kernel/hal/HAL.h>
 #include <kernel/Terminal.h>
 #include <kernel/Vga.h>
+#include <kernel/Exception.h>
 
 namespace kernel
 {
@@ -12,13 +13,11 @@ namespace kernel
 
 	extern "C" void default_irq_handler() 
 	{
-		terminal::ClearScreen(vga::CreateColour(vga::COLOUR_WHITE, vga::COLOUR_RED));
-		terminal::WriteString("*** MyOS Unhandled Exception! ***");
-
+		Exception::KernelPanic("Unhandled Exception!");
 		while(true);
 	}
 
-	void IDT::Initialise (uint16_t codeSel) 
+	void IDT::Initialise(uint16_t codeSel) 
 	{
 		s_Idtr.limit = sizeof (Descriptor) * I86_MAX_INTERRUPTS -1;
 		s_Idtr.base	= (uint32_t)&s_Idt[0];
@@ -38,9 +37,9 @@ namespace kernel
 		idt_install ((intptr_t)&s_Idtr);
 	}
 
-	IDT::Descriptor* IDT::GetInterruptRoutine (uint32_t i) 
+	IDT::Descriptor* IDT::GetInterruptDescriptor(uint32_t i) 
 	{
-		if (i>I86_MAX_INTERRUPTS)
+		if (i > I86_MAX_INTERRUPTS)
 		{
 			return 0;
 		}
@@ -48,7 +47,7 @@ namespace kernel
 		return &s_Idt[i];
 	}
 
-	void IDT::InstallInterruptRoutine (uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq) 
+	void IDT::InstallInterruptRoutine(uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq) 
 	{
 		if (i>I86_MAX_INTERRUPTS)
 			return;

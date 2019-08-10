@@ -13,4 +13,9 @@ namespace kernel
 	void CPU::Shutdown () 
 	{
 	}
+
+	const char* CPU::GetVendor()
+	{
+		return cpu_get_vendor();
+	}
 }

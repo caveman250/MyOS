@@ -12,9 +12,6 @@ namespace kernel
 	class IDT
 	{
 	public:
-
-		static void Initialise (uint16_t codeSel);
-
 		struct Descriptor 
 		{
 			//bits 0-16 of interrupt routine (ir) address
@@ -37,10 +34,9 @@ namespace kernel
 			uint32_t		base;
 		} __attribute((packed));
 
-	private:
-
-		//i86 defines 256 possible interrupt handlers
-		#define I86_MAX_INTERRUPTS		256
+		static Descriptor* GetInterruptDescriptor(uint32_t i);
+		static void Initialise(uint16_t codeSel);
+		static void InstallInterruptRoutine(uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq);
 
 		#define I86_IDT_DESC_BIT16		0x06	//00000110
 		#define I86_IDT_DESC_BIT32		0x0E	//00001110
@@ -49,8 +45,9 @@ namespace kernel
 		#define I86_IDT_DESC_RING3		0x60	//01100000
 		#define I86_IDT_DESC_PRESENT	0x80	//10000000
 
-		static Descriptor* GetInterruptRoutine (uint32_t i);
-		static void InstallInterruptRoutine (uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq);
+	private:
+		//i86 defines 256 possible interrupt handlers
+		#define I86_MAX_INTERRUPTS		256
 	};
 
 	extern "C" void idt_install(uintptr_t);

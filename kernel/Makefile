@@ -23,6 +23,11 @@ $(ARCHDIR)/kernel/hal/GDT_ASM.o \
 $(ARCHDIR)/kernel/hal/IDT.o \
 $(ARCHDIR)/kernel/hal/IDT_ASM.o \
 $(ARCHDIR)/kernel/hal/CPU.o \
+$(ARCHDIR)/kernel/hal/CPU_ASM.o \
+$(ARCHDIR)/kernel/hal/PIC.o \
+$(ARCHDIR)/kernel/hal/PIT.o \
+$(ARCHDIR)/kernel/hal/PIT_ASM.o \
+$(ARCHDIR)/kernel/Exception.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \

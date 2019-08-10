@@ -14,7 +14,10 @@ namespace kernel
     public:
         static void Initialise ();
         static void Shutdown ();
+        static const char* GetVendor();
     };
+
+    extern "C" const char* cpu_get_vendor();
 }
 
 #endif

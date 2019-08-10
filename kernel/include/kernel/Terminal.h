@@ -11,6 +11,9 @@ namespace kernel::terminal
     void Write(const char* data, size_t size);
     void WriteString(const char* data);
     void ClearScreen(uint8_t colour);
+    void SetCursorPos(size_t row, size_t col);
+    void GetCursorPos(size_t& row, size_t& col);
+    void SetHardwareCursorUpdateEnabled(bool enabled);
 }
 
 extern "C" void terminal_write(const char* data, size_t size);
