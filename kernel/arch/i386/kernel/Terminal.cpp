@@ -22,7 +22,7 @@ namespace kernel::terminal
     {
         s_Buffer = (uint16_t*) 0xB8000;
 
-        ClearScreen(vga::CreateColour(vga::COLOUR_WHITE, vga::COLOUR_CYAN));
+        ClearScreen(vga::CreateColour(vga::COLOUR_LIGHT_GREY, vga::COLOUR_BLUE));
         SetHardwareCursorUpdateEnabled(true);
     }
 

@@ -28,6 +28,7 @@ $(ARCHDIR)/kernel/hal/PIC.o \
 $(ARCHDIR)/kernel/hal/PIT.o \
 $(ARCHDIR)/kernel/hal/PIT_ASM.o \
 $(ARCHDIR)/kernel/Exception.o \
+$(ARCHDIR)/kernel/PhysicalMemoryManager.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \

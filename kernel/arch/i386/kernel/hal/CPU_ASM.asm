@@ -5,4 +5,5 @@ cpuid
 mov		[eax], ebx
 mov		[eax+4], edx
 mov		[eax+8], ecx
+
 ret

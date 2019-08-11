@@ -7,5 +7,5 @@ isodir/
 *.d
 sysroot
 *.a
-
+*.log
 

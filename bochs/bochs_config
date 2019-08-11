@@ -1,0 +1,15 @@
+# ROM and VGA BIOS images ---------------------------------------------
+ 
+romimage:    file=/usr/share/bochs/BIOS-bochs-latest, address=FFFCEF8D
+vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest 
+ 
+# boot from floppy using our disk image -------------------------------
+ 
+ata0-slave: type=cdrom, path=/home/ouchqt/Desktop/MyOS/myos.iso, status=inserted
+boot: cdrom
+ 
+# logging and reporting -----------------------------------------------
+ 
+log:         MyOS.log             # All errors and info logs will output to OSDev.log
+error:       action=report 
+info:        action=report

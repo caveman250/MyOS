@@ -1,14 +1,26 @@
 #include <stdio.h>
 
+#include <vendor/multiboot.h>
+
 #include <kernel/Terminal.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/Exception.h>
- 
-int i = 100;
+#include <kernel/PhysicalMemoryManager.h>
+
+const char* MemoryTypeStrings[] = {
+	"Available",
+	"Reserved",
+	"ACPI Reclaim",
+	"ACPI NVS Memory",
+	"Bad Ram"
+};
+
+extern uint32_t kernelStart;
+extern uint32_t kernelEnd;
 
 namespace kernel
 {
-	extern "C" void kernel_main(void) 
+	extern "C" void kernel_main(unsigned int magic, multiboot_info_t* mbt) 
 	{
 		terminal::Init();
 		HAL::Initialise();
@@ -32,34 +44,72 @@ namespace kernel
 		HAL::SetInterruptRoutine(18, (uint32_t)Exception::MachineCheckAbort);
 		HAL::SetInterruptRoutine(19, (uint32_t)Exception::SimdFpuFault);
 
-		printf("                          ___  ___        _____ _____ \n");
-		printf("                          |  \\/  |       |  _  /  ___|\n");
-		printf("                          | .  . |_   _  | | | \\ `--. \n");
-		printf("                          | |\\/| | | | | | | | |`--. \\\n");
-		printf("                          | |  | | |_| | \\ \\_/ /\\__/ /\n");
-		printf("                          \\_|  |_/\\__, |  \\___/\\____/ \n");
-		printf("                                   __/ |              \n");
-		printf("                                  |___/               \n");
+		//printf("                          ___  ___        _____ _____ \n");
+		//printf("                          |  \\/  |       |  _  /  ___|\n");
+		//printf("                          | .  . |_   _  | | | \\ `--. \n");
+		//printf("                          | |\\/| | | | | | | | |`--. \\\n");
+		//printf("                          | |  | | |_| | \\ \\_/ /\\__/ /\n");
+		//printf("                          \\_|  |_/\\__, |  \\___/\\____/ \n");
+		//printf("                                   __/ |              \n");
+		//printf("                                  |___/               \n");
 
-		printf("global variable 'i' as int:     [%i]\n", i);
-		printf("global variable 'i' as hex:     [0x%x]\n", i);
-		const char* str = "this is a const char*";
-		printf("local variable 'str':           [%s]\n", str);
-		printf("CPU Vendor: %s\n", HAL::GetCpuVendor());
-		printf("Current tick count: %i\n", HAL::GetTickCount());
-		printf("Press any key to throw an unhandled exception ;)\n");
+		printf("mem lower: 0x%x\n", mbt->mem_lower);
+		printf("mem upper: 0x%x\n", mbt->mem_upper);
+		printf("mbt magic 0x%x:\n", magic);
+
+		int32_t memSize = 1024 + mbt->mem_lower + mbt->mem_upper;
+		printf("Memory Size 0x%x\n", memSize);
+		uint32_t kernelSize = &kernelEnd - &kernelStart;
+		printf("Kernel Size 0x%x:\n", kernelSize);
+
+		PhysicalMemoryManager::Initialise(memSize, (uint32_t)&kernelEnd);
+
+		printf("\nPhysical Memory Map:\n");
+		int mapIndex = 0;
+		for (multiboot_memory_map_t* memMap = (multiboot_memory_map_t*)mbt->mmap_addr; (uint32_t)memMap < mbt->mmap_addr + mbt->mmap_length; memMap++) 
+		{
+			printf("    region %i: start: 0x%x%x length (bytes): 0x%x%x type: %i (%s)\n", 
+				mapIndex, 
+				memMap->addrHi, 
+				memMap->addrLow,
+				memMap->lenHi, 
+				memMap->lenLow,
+				memMap->type, 
+				MemoryTypeStrings[memMap->type -1]);
+
+			mapIndex++;
+
+			if(memMap->type == 1 /* Available */)
+			{
+				PhysicalMemoryManager::InitialiseRegion(memMap->addrHi, memMap->lenHi);
+			}
+		}
+
+		//deinit the region the kernel is in as its allready in use
+		PhysicalMemoryManager::DeInitialiseRegion(0x100000, (uint32_t)&kernelEnd);
+
+		printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n",
+			PhysicalMemoryManager::GetTotalBlockCount(), 
+			PhysicalMemoryManager::GetUsedBlockCount(), 
+			PhysicalMemoryManager::GetFreeBlockCount() );
+
+		uint32_t* p = (uint32_t*)PhysicalMemoryManager::AllocateBlocks(2);
+		printf("\np allocated with 2 blocks at 0x%x\n", p);
+
+		uint32_t* p2 = (uint32_t*)PhysicalMemoryManager::AllocateBlock();
+		printf("p2 allocated at 0x%x\n", p2);
+
+		PhysicalMemoryManager::FreeBlocks(p, 2);
+		p = (uint32_t*)PhysicalMemoryManager::AllocateBlocks(2);
+		printf("Unallocated p to free blocks 1 and 2.\nreallocated p at 0x%x\n", p);
+
+		PhysicalMemoryManager::FreeBlocks(p, 2);
+		PhysicalMemoryManager::FreeBlock(p2);
+
+		printf("\nPress any key to throw an unhandled exception ;)");
 
 		while(true)
 		{
-			size_t terminalRow, terminalCol;
-			terminal::GetCursorPos(terminalRow, terminalCol);
-			terminal::SetHardwareCursorUpdateEnabled(false);
-			terminal::SetCursorPos(12, 0);
-
-			printf("Current tick count: %i\n", HAL::GetTickCount());
-
-			terminal::SetCursorPos(terminalRow, terminalCol);
-			terminal::SetHardwareCursorUpdateEnabled(true);
 		}
 	}
 }

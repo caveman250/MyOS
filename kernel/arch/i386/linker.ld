@@ -5,8 +5,10 @@ SECTIONS
 {
 	/* Start from 1 MegaByte */
 	. = 1M;
- 
-	/* put the multiboot section first, following by the text section */
+
+	kernelStart = .;
+
+	/* put the multiboot section first, followed by the text section */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
 		*(.multiboot)
@@ -31,4 +33,6 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+
+	kernelEnd= .;
 }

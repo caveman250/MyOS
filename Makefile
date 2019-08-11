@@ -4,6 +4,9 @@ build: headers
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install && cd ../
 	cd kernel && SYSROOT=$(SYSROOT) $(MAKE) install && cd ../
 
+run_bochs: image
+	bochs -f ./bochs/bochs_config -q
+
 run: image
 	qemu-system-i386 -cdrom myos.iso
 

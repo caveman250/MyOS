@@ -25,12 +25,17 @@ global _start:function (_start.end - _start) ;_start is a global function
 _start:
 	;point the esp register to the top of the stack
 	mov esp, stack_top
+
+	;push GRUB multiboot info onto the stack
+	push dword ebx
+	push dword eax
  
 	extern _init
 	call _init
 
 	;call kernel_main in kernel.c. this will only work if the stack is still 16 bit aligned, 
 	;since nothing has been pushed to the stack we are ok.
+
 	extern kernel_main
 	call kernel_main
  
