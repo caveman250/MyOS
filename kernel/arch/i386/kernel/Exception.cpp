@@ -1,14 +1,14 @@
 #include <kernel/Exception.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/Terminal.h>
-#include <kernel/Vga.h>
+#include <kernel/VGA.h>
 #include <stdarg.h>
 
 namespace kernel
 {
 	void Exception::KernelPanic(const char* fmt, ...)
 	{
-		kernel::HAL::DisableInterrupts();
+		HAL::DisableInterrupts();
 
 		va_list args;
 
@@ -17,9 +17,9 @@ namespace kernel
 
 		const char* disclamer="***MyOS Kernel Panic***\nError Code Bellow:\n\n";
 
-		kernel::terminal::ClearScreen(kernel::vga::CreateColour(kernel::vga::COLOUR_WHITE, kernel::vga::COLOUR_RED));
-		kernel::terminal::WriteString(disclamer);
-		kernel::terminal::WriteString(fmt);
+		Terminal::ClearScreen(VGA::CreateColour(VGA::COLOUR_WHITE, VGA::COLOUR_RED));
+		Terminal::WriteString(disclamer);
+		Terminal::WriteString(fmt);
 
 		while(true);
 	}

@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/Terminal.h>
-#include <kernel/Vga.h>
 #include <kernel/Exception.h>
 
 namespace kernel

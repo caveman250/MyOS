@@ -22,7 +22,7 @@ namespace kernel
 {
 	extern "C" void kernel_main(unsigned int magic, multiboot_info_t* mbt) 
 	{
-		terminal::Init();
+		Terminal::Init();
 		HAL::Initialise();
 
 		HAL::SetInterruptRoutine(0, (uint32_t)Exception::DivideByZeroFault);
