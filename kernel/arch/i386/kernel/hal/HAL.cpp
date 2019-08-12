@@ -70,7 +70,7 @@ namespace kernel
 	void HAL::SetInterruptRoutine(int intno, uint32_t vect) 
 	{
 		//install interrupt handler. This overwrites default interrupt handler
-		IDT::InstallInterruptRoutine(intno, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32, 0x8, vect);
+		IDT::InstallInterruptRoutine(intno, (uint16_t)IDT::IDTDescriptorBit::PRESENT | (uint16_t)IDT::IDTDescriptorBit::BIT32, 0x8, vect);
 	}
 
 	void (*HAL::GetInterruptRoutine(int intno))() 

@@ -4,7 +4,7 @@
 
 namespace kernel
 {
-	static GDT::Descriptor s_Gdt [MAX_DESCRIPTORS] __attribute__((aligned(8)));
+	static GDT::Descriptor s_Gdt [GDT::MAX_DESCRIPTORS] __attribute__((aligned(8)));
 	static GDT::GDTR s_Gdtr __attribute__((aligned(8)));
 
 	int GDT::Initialise () 
@@ -20,15 +20,15 @@ namespace kernel
 		SetDescriptor (1,
 			0,
 			0xffffffff,
-			I86_GDT_DESC_READWRITE|I86_GDT_DESC_EXEC_CODE|I86_GDT_DESC_CODEDATA|I86_GDT_DESC_MEMORY,
-			I86_GDT_GRAND_4K | I86_GDT_GRAND_32BIT | I86_GDT_GRAND_LIMITHI_MASK);
+			(uint8_t)GDTDescriptorBit::READWRITE | (uint8_t)GDTDescriptorBit::EXEC_CODE | (uint8_t)GDTDescriptorBit::CODEDATA | (uint8_t)GDTDescriptorBit::MEMORY,
+			(uint8_t)GDTDescriptorGrandBit::FOUR_K | (uint8_t)GDTDescriptorGrandBit::THIRTY_TWO_BIT | (uint8_t)GDTDescriptorGrandBit::LIMITHI_MASK);
 
 		//default data descriptor
 		SetDescriptor (2,
 			0,
 			0xffffffff,
-			I86_GDT_DESC_READWRITE|I86_GDT_DESC_CODEDATA|I86_GDT_DESC_MEMORY,
-			I86_GDT_GRAND_4K | I86_GDT_GRAND_32BIT | I86_GDT_GRAND_LIMITHI_MASK);
+			(uint8_t)GDTDescriptorBit::READWRITE | (uint8_t)GDTDescriptorBit::CODEDATA | (uint8_t)GDTDescriptorBit::MEMORY,
+			(uint8_t)GDTDescriptorGrandBit::FOUR_K | (uint8_t)GDTDescriptorGrandBit::THIRTY_TWO_BIT | (uint8_t)GDTDescriptorGrandBit::LIMITHI_MASK);
 
 		gdt_install ((uintptr_t)&s_Gdt, sizeof(s_Gdt) - 1);
 
