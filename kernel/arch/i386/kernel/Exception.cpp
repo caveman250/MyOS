@@ -17,7 +17,7 @@ namespace kernel
 
 		const char* disclamer="***MyOS Kernel Panic***\nError Code Bellow:\n\n";
 
-		Terminal::ClearScreen(VGA::CreateColour(VGA::COLOUR_WHITE, VGA::COLOUR_RED));
+		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::COLOUR_WHITE, VGA::Colour::COLOUR_RED));
 		Terminal::WriteString(disclamer);
 		Terminal::WriteString(fmt);
 

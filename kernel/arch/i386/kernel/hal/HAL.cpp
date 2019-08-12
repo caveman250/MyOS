@@ -11,7 +11,7 @@ namespace kernel
 		CPU::Initialise();
 		PIC::Initialise(0x20, 0x28);
 		PIT::Initialise();
-		PIT::StartCounter(100, I86_PIT_OCW_COUNTER_0, I86_PIT_OCW_MODE_SQUAREWAVEGEN);
+		PIT::StartCounter(100, (uint8_t)PIT::Counter::COUNTER_0, (uint8_t)PIT::CounterMode::SQUAREWAVEGEN);
 
 		EnableInterrupts();
 	}
@@ -30,11 +30,11 @@ namespace kernel
 		//do we need to notify the second pic?
 		if (intno >= 8)
 		{
-			PIC::SendCommand(I86_PIC_OCW2_MASK_EOI, 1);
+			PIC::SendCommand((uint8_t)PIC::CommandWord2Mask::EOI, 1);
 		}
 
 		//always send end-of-interrupt to primary pic
-		PIC::SendCommand(I86_PIC_OCW2_MASK_EOI, 0);
+		PIC::SendCommand((uint8_t)PIC::CommandWord2Mask::EOI, 0);
 	}
 
 	void HAL::Sound(unsigned frequency) 

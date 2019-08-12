@@ -9,57 +9,74 @@
 namespace kernel
 {
 	//PIC 1 register port addresses
-	#define I86_PIC1_REG_COMMAND	0x20
-	#define I86_PIC1_REG_STATUS		0x20
-	#define I86_PIC1_REG_DATA		0x21
-	#define I86_PIC1_REG_IMR		0x21
+    enum class PIC1PortAddress
+    {
+        COMMAND = 0x20,
+        STATUS	= 0x20,
+        DATA = 0x21,
+        IMR = 0x21
+    };
 
 	//PIC 2 register port addresses
-	#define I86_PIC2_REG_COMMAND	0xA0
-	#define I86_PIC2_REG_STATUS		0xA0
-	#define I86_PIC2_REG_DATA		0xA1
-	#define I86_PIC2_REG_IMR		0xA1
+    enum class PIC2PortAddress
+    {
+        COMMAND = 0xA0,
+        STATUS	= 0xA0,
+        DATA = 0xA1,
+        IMR = 0xA1
+    };
 
+	//Initialisation Control Word 1 bit masks
+    enum class InitialisationWord1Mask
+    {
+	    IC4 = 0x1,			        //00000001
+	    SNGL = 0x2,			        //00000010
+	    ADI = 0x4,			        //00000100
+	    LTIM = 0x8,			        //00001000
+	    INIT = 0x10		            //00010000
+    };
 
-	//Initialization Control Word 1 bit masks
-	#define I86_PIC_ICW1_MASK_IC4			0x1			//00000001
-	#define I86_PIC_ICW1_MASK_SNGL			0x2			//00000010
-	#define I86_PIC_ICW1_MASK_ADI			0x4			//00000100
-	#define I86_PIC_ICW1_MASK_LTIM			0x8			//00001000
-	#define I86_PIC_ICW1_MASK_INIT			0x10		//00010000
+	//Initialisation Control Words 2 and 3 do not require bit masks
 
-	//Initialization Control Words 2 and 3 do not require bit masks
-
-	//Initialization Control Word 4 bit masks
-	#define I86_PIC_ICW4_MASK_UPM			0x1			//00000001
-	#define I86_PIC_ICW4_MASK_AEOI			0x2			//00000010
-	#define I86_PIC_ICW4_MASK_MS			0x4			//00000100
-	#define I86_PIC_ICW4_MASK_BUF			0x8			//00001000
-	#define I86_PIC_ICW4_MASK_SFNM			0x10		//00010000
+	//Initialisation Control Word 4 bit masks
+    enum class InitialisationWord4Mask
+    {
+        UPM	= 0x1,			        //00000001
+        AEOI = 0x2,			        //00000010
+        MS = 0x4,			        //00000100
+        BUF = 0x8,			        //00001000
+        SFNM = 0x10	                //00010000
+    };
 
 	//Initialization Command 1 control bits
-	#define I86_PIC_ICW1_IC4_EXPECT				1			//1
-	#define I86_PIC_ICW1_IC4_NO					0			//0
-	#define I86_PIC_ICW1_SNGL_YES				2			//10
-	#define I86_PIC_ICW1_SNGL_NO				0			//00
-	#define I86_PIC_ICW1_ADI_CALLINTERVAL4		4			//100
-	#define I86_PIC_ICW1_ADI_CALLINTERVAL8		0			//000
-	#define I86_PIC_ICW1_LTIM_LEVELTRIGGERED	8			//1000
-	#define I86_PIC_ICW1_LTIM_EDGETRIGGERED		0			//0000
-	#define I86_PIC_ICW1_INIT_YES				0x10		//10000
-	#define I86_PIC_ICW1_INIT_NO				0			//00000
+    enum class InitialisationCommand1ControlBit
+    {
+        IC4_EXPECT = 1,			    //1
+        IC4_NO = 0,			        //0
+        SNGL_YES = 2,			    //10
+        SNGL_NO = 0,			    //00
+        ADI_CALLINTERVAL4 = 4,	    //100
+        ADI_CALLINTERVAL8 = 0,	    //000
+        LTIM_LEVELTRIGGERED = 8,    //1000
+        LTIM_EDGETRIGGERED = 0,	    //0000
+        INIT_YES = 0x10,		    //10000
+        INIT_NO = 0			        //00000
+    };
 
 	//Initialization Command 4 control bits
-	#define I86_PIC_ICW4_UPM_86MODE			1			//1
-	#define I86_PIC_ICW4_UPM_MCSMODE		0			//0
-	#define I86_PIC_ICW4_AEOI_AUTOEOI		2			//10
-	#define I86_PIC_ICW4_AEOI_NOAUTOEOI		0			//0
-	#define I86_PIC_ICW4_MS_BUFFERMASTER	4			//100
-	#define I86_PIC_ICW4_MS_BUFFERSLAVE		0			//0
-	#define I86_PIC_ICW4_BUF_MODEYES		8			//1000
-	#define I86_PIC_ICW4_BUF_MODENO			0			//0
-	#define I86_PIC_ICW4_SFNM_NESTEDMODE	0x10		//10000
-	#define I86_PIC_ICW4_SFNM_NOTNESTED		0			//a binary 2 (futurama joke hehe ;)
+    enum class InitialisationCommand4ControlBit
+    {
+        UPM_86MODE = 1,			    //1
+        UPM_MCSMODE = 0,			//0
+        AEOI_AUTOEOI = 2,			//10
+        AEOI_NOAUTOEOI = 0,			//0
+        MS_BUFFERMASTER	= 4,		//100
+        MS_BUFFERSLAVE = 0,			//0
+        BUF_MODEYES	= 8,			//1000
+        BUF_MODENO = 0,			    //0
+        SFNM_NESTEDMODE	= 0x10,		//10000
+        SFNM_NOTNESTED = 0			//0
+    };
 
 	void PIC::SendCommand(uint8_t cmd, uint8_t picNum) 
 	{
@@ -68,7 +85,7 @@ namespace kernel
 			return;
 		}
 
-		uint8_t	reg = (picNum==1) ? I86_PIC2_REG_COMMAND : I86_PIC1_REG_COMMAND;
+		uint8_t	reg = (picNum==1) ? (uint8_t)PIC2PortAddress::COMMAND : (uint8_t)PIC1PortAddress::COMMAND;
 		kernel::HAL::OutB(reg, cmd);
 	}
 
@@ -79,7 +96,7 @@ namespace kernel
 			return;
 		}
 
-		uint8_t	reg = (picNum == 1) ? I86_PIC2_REG_DATA : I86_PIC1_REG_DATA;
+		uint8_t	reg = (picNum == 1) ? (uint8_t)PIC2PortAddress::DATA : (uint8_t)PIC1PortAddress::DATA;
 		kernel::HAL::OutB(reg, data);
 	}
 
@@ -90,7 +107,7 @@ namespace kernel
 			return 0;
 		}
 
-		uint8_t	reg = (picNum == 1) ? I86_PIC2_REG_DATA : I86_PIC1_REG_DATA;
+		uint8_t	reg = (picNum == 1) ? (uint8_t)PIC2PortAddress::DATA : (uint8_t)PIC1PortAddress::DATA;
 		return kernel::HAL::InB(reg);
 	}
 
@@ -101,8 +118,8 @@ namespace kernel
 		kernel::HAL::DisableInterrupts();
 
 		//Begin initialization of PIC
-		icw = (icw & ~I86_PIC_ICW1_MASK_INIT) | I86_PIC_ICW1_INIT_YES;
-		icw = (icw & ~I86_PIC_ICW1_MASK_IC4) | I86_PIC_ICW1_IC4_EXPECT;
+		icw = (icw & ~(uint8_t)InitialisationWord1Mask::INIT) | (uint8_t)InitialisationCommand1ControlBit::INIT_YES;
+		icw = (icw & ~(uint8_t)InitialisationWord1Mask::IC4) | (uint8_t)InitialisationCommand1ControlBit::IC4_EXPECT;
 
 		SendCommand(icw, 0);
 		SendCommand(icw, 1);
@@ -119,7 +136,7 @@ namespace kernel
 		SendData(0x02, 1);
 
 		//Send Initialization control word 4. Enables i86 mode
-		icw = (icw & ~I86_PIC_ICW4_MASK_UPM) | I86_PIC_ICW4_UPM_86MODE;
+		icw = (icw & ~(uint8_t)InitialisationWord4Mask::UPM) | (uint8_t)InitialisationCommand4ControlBit::UPM_86MODE;
 
 		SendData(icw, 0);
 		SendData(icw, 1);

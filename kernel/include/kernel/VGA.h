@@ -8,7 +8,8 @@ namespace kernel
     class VGA
     {
     public:
-        enum Colour {
+        enum class Colour 
+        {
             COLOUR_BLACK = 0,
             COLOUR_BLUE = 1,
             COLOUR_GREEN = 2,
@@ -29,7 +30,7 @@ namespace kernel
 
         static inline uint8_t CreateColour(enum Colour fg, enum Colour bg) 
         {
-            return fg | bg << 4;
+            return (uint8_t)fg | (uint8_t)bg << 4;
         }
 
         static inline uint16_t Entry(unsigned char uc, uint8_t colour) 

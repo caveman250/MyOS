@@ -4,9 +4,9 @@
 
 namespace kernel
 {
-	#define BLOCKS_PER_BYTE 8
-	#define BLOCK_SIZE 4096
-	#define BLOCK_ALIGN BLOCK_SIZE
+	constexpr uint32_t BLOCKS_PER_BYTE = 8;
+	constexpr uint32_t BLOCK_SIZE = 4096;
+	constexpr uint32_t BLOCK_ALIGN = BLOCK_SIZE;
 
 	uint32_t s_MemorySize = 0;
 	uint32_t s_UsedMemoryBlocks = 0;

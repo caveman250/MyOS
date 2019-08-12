@@ -6,10 +6,13 @@
 
 namespace kernel
 {
-	#define		I86_PIT_REG_COUNTER0		0x40
-	#define		I86_PIT_REG_COUNTER1		0x41
-	#define		I86_PIT_REG_COUNTER2		0x42
-	#define		I86_PIT_REG_COMMAND			0x43
+    enum class ControlRegisters
+    {
+        COUNTER_0 = 0x40,
+        COUNTER_1 = 0x41,
+        COUNTER_2 = 0x42,
+        COMMAND = 0x43
+    };
 
 	//Global Tick count
 	static volatile uint32_t s_PitTicks=0;
@@ -41,7 +44,7 @@ namespace kernel
 
 	void PIT::SendCommand(uint8_t cmd)
 	{
-		HAL::OutB(I86_PIT_REG_COMMAND, cmd);
+		HAL::OutB((unsigned short)ControlRegisters::COMMAND, cmd);
 	}
 
 	void PIT::SendData(uint16_t data, uint8_t counter)
@@ -49,14 +52,14 @@ namespace kernel
 		uint8_t port;
 		switch(counter)
 		{
-			case I86_PIT_OCW_COUNTER_0:
-				port = I86_PIT_REG_COUNTER0;
+			case (int)Counter::COUNTER_0:
+				port = (uint8_t)ControlRegisters::COUNTER_0;
 				break;
-			case I86_PIT_OCW_COUNTER_1:
-				port = I86_PIT_REG_COUNTER1;
+			case (int)Counter::COUNTER_1:
+				port = (uint8_t)ControlRegisters::COUNTER_1;
 				break;
 			default:
-				port = I86_PIT_REG_COUNTER2;
+				port = (uint8_t)ControlRegisters::COUNTER_2;
 				break;
 		}
 
@@ -68,14 +71,14 @@ namespace kernel
 		uint8_t port;
 		switch(counter)
 		{
-			case I86_PIT_OCW_COUNTER_0:
-				port = I86_PIT_REG_COUNTER0;
+			case (int)Counter::COUNTER_0:
+				port = (uint8_t)ControlRegisters::COUNTER_0;
 				break;
-			case I86_PIT_OCW_COUNTER_1:
-				port = I86_PIT_REG_COUNTER1;
+			case (int)Counter::COUNTER_1:
+				port = (uint8_t)ControlRegisters::COUNTER_1;
 				break;
 			default:
-				port = I86_PIT_REG_COUNTER2;
+				port = (uint8_t)ControlRegisters::COUNTER_2;
 				break;
 		}
 
@@ -93,9 +96,9 @@ namespace kernel
 
 		//send operational command
 		uint8_t ocw = 0;
-		ocw = (ocw & ~I86_PIT_OCW_MASK_MODE) | mode;
-		ocw = (ocw & ~I86_PIT_OCW_MASK_RL) | I86_PIT_OCW_RL_DATA;
-		ocw = (ocw & ~I86_PIT_OCW_MASK_COUNTER) | counter;
+		ocw = (ocw & ~(uint8_t)CommandMasks::MODE) | mode;
+		ocw = (ocw & ~(uint8_t)CommandMasks::RL) | (uint8_t)TransferType::DATA;
+		ocw = (ocw & ~(uint8_t)CommandMasks::COUNTER) | counter;
 		SendCommand(ocw);
 
 		//set frequency rate
