@@ -166,9 +166,9 @@ int printf(const char* __restrict__ format, ...)
 		else if(*format == 'X' || *format == 'x')
 		{
 			format++;
-			int d = va_arg (parameters, int);
+			unsigned int d = va_arg (parameters, unsigned int);
 			char str[32]={0};
-			itoa_s (d,16,str);
+			itoa(d,16,str);
 			size_t len = strlen(str);
 
 			if (!maxrem) 
@@ -181,7 +181,7 @@ int printf(const char* __restrict__ format, ...)
 				return -1;
 			}
 
-			written++;
+			written+=len;
 		}
 		else 
 		{

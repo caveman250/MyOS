@@ -46,7 +46,7 @@ namespace kernel
 	unsigned char HAL::InB(unsigned short portid) 
 	{
 		uint8_t ret;
-		asm volatile ( "inb %1, %0"
+		asm volatile ( "inb %0, %1"
 						: "=a"(ret)
 						: "Nd"(portid) );
 		return ret;
@@ -54,7 +54,7 @@ namespace kernel
 
 	void HAL::OutB(unsigned short portid, unsigned char value) 
 	{
-		asm volatile ( "outb %0, %1" : : "a"(value), "Nd"(portid) );
+		asm volatile ( "outb %0, %1" : : "Nd"(portid), "a"(value) );
 	}
 
 	void HAL::EnableInterrupts() 

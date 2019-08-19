@@ -28,7 +28,10 @@ $(ARCHDIR)/kernel/hal/PIC.o \
 $(ARCHDIR)/kernel/hal/PIT.o \
 $(ARCHDIR)/kernel/hal/PIT_ASM.o \
 $(ARCHDIR)/kernel/Exception.o \
-$(ARCHDIR)/kernel/PhysicalMemoryManager.o \
+$(ARCHDIR)/kernel/MemoryManagement/PhysicalMemoryManager.o \
+$(ARCHDIR)/kernel/MemoryManagement/VirtualMemoryManager.o \
+$(ARCHDIR)/kernel/MemoryManagement/PageDirectoryEntry.o \
+$(ARCHDIR)/kernel/MemoryManagement/PageTableEntry.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \
@@ -56,10 +59,10 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CPP) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 .cpp.o:
-	$(CPP) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	$(CPP) -MD -c -masm=intel $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .c.o:
-	$(CPP) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	$(CPP) -MD -c -masm=intel $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .asm.o:
 	nasm -felf32 $< -o $@

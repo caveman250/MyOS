@@ -1,5 +1,4 @@
-#ifndef _GDT_H_INCLUDED
-# define _GDT_H_INCLUDED
+#pragma once
 
 #if !defined(__i386__)
 #error "[cpu.h] platform not implimented. "
@@ -65,5 +64,3 @@ namespace kernel
 
 	extern "C" void gdt_install (uintptr_t, uint16_t);
 }
-
-#endif

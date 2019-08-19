@@ -1,6 +1,5 @@
 
-#ifndef _EXCEPTION_H
-#define _EXCEPTION_H
+#pragma once
 
 namespace kernel
 {
@@ -28,5 +27,3 @@ namespace kernel
         static void SimdFpuFault(unsigned int cs, unsigned int eip, unsigned int eflags);
     };
 }
-
-#endif

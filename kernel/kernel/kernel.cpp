@@ -5,7 +5,8 @@
 #include <kernel/Terminal.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/Exception.h>
-#include <kernel/PhysicalMemoryManager.h>
+#include <kernel/MemoryManagement/PhysicalMemoryManager.h>
+#include <kernel/MemoryManagement/VirtualMemoryManager.h>
 
 const char* MemoryTypeStrings[] = {
 	"Available",
@@ -22,6 +23,7 @@ namespace kernel
 {
 	extern "C" void kernel_main(unsigned int magic, multiboot_info_t* mbt) 
 	{
+		int integer = 100;
 		Terminal::Init();
 		HAL::Initialise();
 
@@ -53,58 +55,74 @@ namespace kernel
 		//printf("                                   __/ |              \n");
 		//printf("                                  |___/               \n");
 
-		printf("mem lower: 0x%x\n", mbt->mem_lower);
-		printf("mem upper: 0x%x\n", mbt->mem_upper);
-		printf("mbt magic 0x%x:\n", magic);
+		//printf("0x%x\n", mbt);
+		//printf("0x%x\n", &kernelStart);
+		//printf("mbt magic 0x%x:\n", magic);
+		
+
+		//printf("mem lower: 0x%x\n", mbt->mem_lower);
+		//printf("mem upper: 0x%x\n", mbt->mem_upper);
 
 		int32_t memSize = 1024 + mbt->mem_lower + mbt->mem_upper;
-		printf("Memory Size 0x%x\n", memSize);
+
+		//printf("Memory Size 0x%x\n", memSize);
 		uint32_t kernelSize = &kernelEnd - &kernelStart;
 		printf("Kernel Size 0x%x:\n", kernelSize);
+		printf("Kernel Start 0x%x:\n", &kernelStart);
+		printf("Kernel End 0x%x:\n", &kernelEnd);
+		printf("Calculated kernel end 0x%x\n", &kernelStart + kernelSize);
+		printf("Calculated kernel end 2 0x%x\n", (uint32_t*)0xC0100000 + kernelSize);
 
-		PhysicalMemoryManager::Initialise(memSize, (uint32_t)&kernelEnd);
+		memory::PhysicalMemoryManager::Initialise(memSize, (memory::physical_addr)&kernelEnd);
 
+		printf("mbt size 0x%x\n", mbt->mmap_length);
 		printf("\nPhysical Memory Map:\n");
 		int mapIndex = 0;
-		for (multiboot_memory_map_t* memMap = (multiboot_memory_map_t*)mbt->mmap_addr; (uint32_t)memMap < mbt->mmap_addr + mbt->mmap_length; memMap++) 
+		printf("0x%x\n", (uint32_t)(mbt->mmap_addr + mbt->mmap_length));
+		for (multiboot_memory_map_t* memMap = (multiboot_memory_map_t*)mbt->mmap_addr; 
+			(uint32_t)memMap < (uint32_t)(mbt->mmap_addr + mbt->mmap_length); 
+			memMap++) 
 		{
-			printf("    region %i: start: 0x%x%x length (bytes): 0x%x%x type: %i (%s)\n", 
+			printf("    region %i: start: 0x%x%x length bytes: 0x%x%x type: %s\n", 
 				mapIndex, 
 				memMap->addrHi, 
 				memMap->addrLow,
 				memMap->lenHi, 
 				memMap->lenLow,
-				memMap->type, 
 				MemoryTypeStrings[memMap->type -1]);
 
 			mapIndex++;
 
 			if(memMap->type == 1 /* Available */)
 			{
-				PhysicalMemoryManager::InitialiseRegion(memMap->addrHi, memMap->lenHi);
+				memory::PhysicalMemoryManager::InitialiseRegion(memMap->addrHi, memMap->lenHi);
 			}
 		}
 
 		//deinit the region the kernel is in as its allready in use
-		PhysicalMemoryManager::DeInitialiseRegion(0x100000, (uint32_t)&kernelEnd);
+		memory::PhysicalMemoryManager::DeInitialiseRegion((memory::physical_addr)&kernelStart, kernelSize);
 
-		printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n",
-			PhysicalMemoryManager::GetTotalBlockCount(), 
-			PhysicalMemoryManager::GetUsedBlockCount(), 
-			PhysicalMemoryManager::GetFreeBlockCount() );
+		printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n\n",
+			memory::PhysicalMemoryManager::GetTotalBlockCount(), 
+			memory::PhysicalMemoryManager::GetUsedBlockCount(), 
+			memory::PhysicalMemoryManager::GetFreeBlockCount());
 
-		uint32_t* p = (uint32_t*)PhysicalMemoryManager::AllocateBlocks(2);
-		printf("\np allocated with 2 blocks at 0x%x\n", p);
+		memory::VirtualMemoryManager::Initialise();
 
-		uint32_t* p2 = (uint32_t*)PhysicalMemoryManager::AllocateBlock();
-		printf("p2 allocated at 0x%x\n", p2);
+		printf("Paging Enabled: %s", memory::PhysicalMemoryManager::IsPagingEnabled() ? "true" : "false");
 
-		PhysicalMemoryManager::FreeBlocks(p, 2);
-		p = (uint32_t*)PhysicalMemoryManager::AllocateBlocks(2);
-		printf("Unallocated p to free blocks 1 and 2.\nreallocated p at 0x%x\n", p);
-
-		PhysicalMemoryManager::FreeBlocks(p, 2);
-		PhysicalMemoryManager::FreeBlock(p2);
+		//uint32_t* p = (uint32_t*)PhysicalMemoryManager::AllocateBlock ();
+		//printf ("\np allocated at 0x%x", &p);
+//
+		//uint32_t* p2 = (uint32_t*)PhysicalMemoryManager::AllocateBlocks (2);
+		//printf ("\nallocated 2 blocks for p2 at 0x%x", &p2);
+//
+		//PhysicalMemoryManager::FreeBlock (p);
+		//p = (uint32_t*)PhysicalMemoryManager::AllocateBlock  ();
+		//printf ("\nUnallocated p to free block 1. p is reallocated to 0x%x", &p);
+//
+		//PhysicalMemoryManager::FreeBlock (p);
+		//PhysicalMemoryManager::FreeBlocks (p2, 2);
 
 		printf("\nPress any key to throw an unhandled exception ;)");
 

@@ -1,5 +1,4 @@
-#ifndef _KERNEL_TERMINAL_H
-#define _KERNEL_TERMINAL_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -24,5 +23,3 @@ namespace kernel
 }
 
 extern "C" void terminal_write(const char* data, size_t size);
-
-#endif

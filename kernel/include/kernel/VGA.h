@@ -1,6 +1,4 @@
-#ifndef ARCH_I386_VGA_H
-#define ARCH_I386_VGA_H
-
+#pragma once
 #include <stdint.h>
 
 namespace kernel
@@ -10,22 +8,22 @@ namespace kernel
     public:
         enum class Colour 
         {
-            COLOUR_BLACK = 0,
-            COLOUR_BLUE = 1,
-            COLOUR_GREEN = 2,
-            COLOUR_CYAN = 3,
-            COLOUR_RED = 4,
-            COLOUR_MAGENTA = 5,
-            COLOUR_BROWN = 6,
-            COLOUR_LIGHT_GREY = 7,
-            COLOUR_DARK_GREY = 8,
-            COLOUR_LIGHT_BLUE = 9,
-            COLOUR_LIGHT_GREEN = 10,
-            COLOUR_LIGHT_CYAN = 11,
-            COLOUR_LIGHT_RED = 12,
-            COLOUR_LIGHT_MAGENTA = 13,
-            COLOUR_LIGHT_BROWN = 14,
-            COLOUR_WHITE = 15,
+            BLACK = 0,
+            BLUE = 1,
+            GREEN = 2,
+            CYAN = 3,
+            RED = 4,
+            MAGENTA = 5,
+            BROWN = 6,
+            LIGHT_GREY = 7,
+            DARK_GREY = 8,
+            LIGHT_BLUE = 9,
+            LIGHT_GREEN = 10,
+            LIGHT_CYAN = 11,
+            LIGHT_RED = 12,
+            LIGHT_MAGENTA = 13,
+            LIGHT_BROWN = 14,
+            WHITE = 15,
         };
 
         static inline uint8_t CreateColour(enum Colour fg, enum Colour bg) 
@@ -39,4 +37,3 @@ namespace kernel
         }
     };
 }
-#endif

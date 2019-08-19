@@ -1,5 +1,4 @@
-#ifndef _PIC_H_INCLUDED
-#define _PIC_H_INCLUDED
+#pragma once
 
 #if !defined(__i386__)
 #error "[pic.h] platform not implimented."
@@ -64,5 +63,3 @@ namespace kernel
         static void Initialise(uint8_t base0, uint8_t base1);
     };
 }
-
-#endif

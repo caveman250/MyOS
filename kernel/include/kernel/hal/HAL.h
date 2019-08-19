@@ -1,5 +1,4 @@
-#ifndef _HAL_H
-#define _HAL_H
+#pragma once
 
 #if !defined(__i386__)
 #pragma error "HAL not implimented for this platform"
@@ -36,5 +35,3 @@ namespace kernel
 }
 
 extern "C" void hal_gen_interrupt();
-
-#endif

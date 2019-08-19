@@ -43,10 +43,10 @@ libk.a: $(LIBK_OBJS)
 	$(CPP) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 .c.o:
-	$(CPP) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	$(CPP) -MD -c -masm=intel $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .c.libk.o:
-	$(CPP) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+	$(CPP) -MD -c -masm=intel $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 clean:
 	rm -f $(BINARIES) *.a

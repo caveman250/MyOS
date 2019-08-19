@@ -1,5 +1,4 @@
-#ifndef _IDT_H
-#define _IDT_H
+#pragma once
 
 #if !defined(__i386__)
 #error "[cpu.h] platform not implimented. "
@@ -54,5 +53,3 @@ namespace kernel
 
 	extern "C" void idt_install(uintptr_t);
 }
-
-#endif

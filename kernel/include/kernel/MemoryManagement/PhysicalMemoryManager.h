@@ -1,16 +1,14 @@
+#pragma once
 
-#ifndef _PHYSICAL_MEMORY_MANAGER_H
-#define _PHYSICAL_MEMORY_MANAGER_H
-
+#include <stddef.h>
 #include <stdint.h>
 
-namespace kernel
+namespace kernel::memory
 {
+    typedef	uint32_t physical_addr;
     class PhysicalMemoryManager
     {
     public:
-        typedef	uint32_t physical_addr;
-
         static void Initialise(size_t, physical_addr);
         static void InitialiseRegion(physical_addr, size_t);
         static void	DeInitialiseRegion(physical_addr base, size_t);
@@ -27,6 +25,11 @@ namespace kernel
         static uint32_t GetTotalBlockCount();
         static uint32_t GetBlockSize();
 
+        static void	SetPagingEnabled(bool);
+        static bool	IsPagingEnabled();
+        static void	LoadPDBR(physical_addr);
+        static physical_addr GetPDBR();
+
     private:
         static inline void SetMemoryMapBit(int bit);
         static inline void UnSetMemoryMapBit(int bit);
@@ -36,4 +39,3 @@ namespace kernel
         static int GetFirstFreeMemoryMapAreaOfSize(size_t size);
     };
 }
-#endif

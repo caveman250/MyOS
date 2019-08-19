@@ -1,8 +1,9 @@
 #include <string.h>
-#include <kernel/PhysicalMemoryManager.h>
+#include <stdio.h>
+#include <kernel/MemoryManagement/PhysicalMemoryManager.h>
 #include <kernel/Terminal.h>
 
-namespace kernel
+namespace kernel::memory
 {
 	constexpr uint32_t BLOCKS_PER_BYTE = 8;
 	constexpr uint32_t BLOCK_SIZE = 4096;
@@ -16,7 +17,7 @@ namespace kernel
 	void PhysicalMemoryManager::Initialise(size_t memSize, physical_addr bitmap)
 	{
 		s_MemorySize = memSize;
-		s_MemoryMap = (uint32_t*) bitmap;
+		s_MemoryMap = (uint32_t*)bitmap;
 		s_MaxMemoryBlocks = (GetMemorySize() * 1024) / BLOCK_SIZE;
 		s_UsedMemoryBlocks = s_MaxMemoryBlocks;
 
@@ -211,5 +212,54 @@ namespace kernel
 			}
 		}
 		return -1;
+	}
+
+	void PhysicalMemoryManager::SetPagingEnabled(bool b)
+	{
+		if(b)
+		{
+			asm volatile(
+				"mov eax, cr0\n"
+				"or eax, 0x80000000\n"		//set bit 31
+				"mov cr0, eax\n"
+			);
+		}
+		else
+		{
+			asm volatile (
+			"	and eax, 0x7FFFFFFF\n"
+				"mov cr0, eax"
+			);
+		}
+	}
+
+	bool PhysicalMemoryManager::IsPagingEnabled()
+	{
+		uint32_t res=0;
+		asm volatile (
+			"mov	eax, cr0\n"
+			"mov	%0, eax\n"
+		: "=m"(res));
+
+		return (res & 0x80010000) ? true : false;
+	}
+
+	void PhysicalMemoryManager::LoadPDBR(physical_addr addr)
+	{
+		printf("LoadPDBR addr 0x%x\n", addr);
+
+		asm volatile (
+			"mov eax, %0\n"
+			"mov cr3, eax\n"		// PDBR is cr3 register in i86
+		: : "m"(addr));
+	}
+
+	physical_addr PhysicalMemoryManager::GetPDBR()
+	{
+		physical_addr pdbr;
+		asm volatile (
+			"mov eax, cr3\n"
+			"mov %0, eax\n"
+		: "=m"(pdbr));
 	}
 }

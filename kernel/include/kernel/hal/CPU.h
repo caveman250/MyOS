@@ -1,5 +1,4 @@
-#ifndef _CPU_H_INCLUDED
-# define _CPU_H_INCLUDED
+#pragma onces
 
 #if !defined(__i386__)
 #error "[cpu.h] platform not implimented. "
@@ -19,5 +18,3 @@ namespace kernel
 
     extern "C" const char* cpu_get_vendor();
 }
-
-#endif

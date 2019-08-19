@@ -1,5 +1,4 @@
-#ifndef _PIT_H_INCLUDED
-#define _PIT_H_INCLUDED
+#pragma once
 
 #if !defined(__i386__)
 #error "[pit.h] platform not implimented."
@@ -68,4 +67,3 @@ namespace kernel
     
     extern "C" void handle_irq();
 }
-#endif

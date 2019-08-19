@@ -20,9 +20,9 @@ namespace kernel
 
     void Terminal::Init(void) 
     {
-        s_Buffer = (uint16_t*) 0xB8000;
-
-        ClearScreen(VGA::CreateColour(VGA::Colour::COLOUR_LIGHT_GREY, VGA::Colour::COLOUR_BLUE));
+        s_Buffer = (uint16_t*) 0x000B8000;
+        
+        ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLUE));
         SetHardwareCursorUpdateEnabled(true);
     }
 

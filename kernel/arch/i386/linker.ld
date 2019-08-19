@@ -4,31 +4,31 @@ ENTRY(_start)
 SECTIONS
 {
 	/* Start from 1 MegaByte */
-	. = 1M;
+	. = 0xC0100000;
 
 	kernelStart = .;
 
 	/* put the multiboot section first, followed by the text section */
-	.text BLOCK(4K) : ALIGN(4K)
+	.text ALIGN (4K) : AT (ADDR (.text) - 0xC0000000)
 	{
 		*(.multiboot)
 		*(.text)
 	}
  
 	/* Read-only data. */
-	.rodata BLOCK(4K) : ALIGN(4K)
+	.rodata ALIGN (4K) : AT (ADDR (.rodata) - 0xC0000000)
 	{
 		*(.rodata)
 	}
  
 	/* Read-write data (initialized) */
-	.data BLOCK(4K) : ALIGN(4K)
+	.data ALIGN (4K) : AT (ADDR (.data) - 0xC0000000)
 	{
 		*(.data)
 	}
  
 	/* Read-write data (uninitialized) and stack */
-	.bss BLOCK(4K) : ALIGN(4K)
+	.bss ALIGN (4K) : AT (ADDR (.bss) - 0xC0000000)
 	{
 		*(COMMON)
 		*(.bss)

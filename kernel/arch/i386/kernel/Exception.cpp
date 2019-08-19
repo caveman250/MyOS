@@ -3,21 +3,23 @@
 #include <kernel/Terminal.h>
 #include <kernel/VGA.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 namespace kernel
 {
 	void Exception::KernelPanic(const char* fmt, ...)
 	{
+		//TODO need a way of printing the args, should implement vsnprintf
 		HAL::DisableInterrupts();
 
 		va_list args;
 
-		va_start(args, fmt);
+		va_start(args, fmt);		
 		va_end (args);
 
 		const char* disclamer="***MyOS Kernel Panic***\nError Code Bellow:\n\n";
 
-		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::COLOUR_WHITE, VGA::Colour::COLOUR_RED));
+		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::WHITE, VGA::Colour::RED));
 		Terminal::WriteString(disclamer);
 		Terminal::WriteString(fmt);
 
@@ -102,9 +104,14 @@ namespace kernel
 		while(true);
 	}
 
-	void Exception::PageFault(unsigned int cs,unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::PageFault(unsigned int cs, unsigned int err, unsigned int eip, unsigned int eflags)
 	{
-		KernelPanic("Page Fault");
+		KernelPanic("Page Fault\n");
+		unsigned bit0 = (1 << 0) & err;
+		unsigned bit1 = (1 << 1) & err;
+		unsigned bit2 = (1 << 2) & err;
+		printf("%i %i %i", bit0, bit1, bit2);
+		printf("%x %x %x", cs, eip, eflags);
 		while(true);
 	}
 
