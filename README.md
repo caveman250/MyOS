@@ -7,7 +7,7 @@ Simple Operating system hobby project
     This could be fixed fairly easily, but for an out of the box experience 
     you will need to be running on linux or WSL.
 ## GCC cross compiler:
-    will need this to build. Follow the instructions at [https://wiki.osdev.org/GCC_Cross-Compiler]
+    will need this to build. Follow the instructions [here]:https://wiki.osdev.org/GCC_Cross-Compiler
 ## QEMU
     Emulator used to run the OS, should be in your distros repositories.
 ## Bochs (Optional)
