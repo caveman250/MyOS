@@ -1,6 +1,8 @@
 # MyOS
 Simple Operating system hobby project
 
+current lines of code: 3155 (keeping track for lols)
+
 # Requirements:
 ## Linux Environment
 The makefile and build scripts currently assume you are on linux. This could be fixed fairly easily, but for an out of the box experience you will need to be running on linux or WSL.
