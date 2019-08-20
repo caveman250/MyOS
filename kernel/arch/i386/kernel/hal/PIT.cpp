@@ -23,7 +23,6 @@ namespace kernel::hal
 
 	void PIT::SetTickCount(uint32_t i)
 	{
-		uint32_t ret = m_PitTicks;
 		m_PitTicks = i;
 	}
 

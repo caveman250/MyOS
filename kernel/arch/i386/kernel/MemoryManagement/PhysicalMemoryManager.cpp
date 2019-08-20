@@ -261,5 +261,7 @@ namespace kernel::memory
 			"mov eax, cr3\n"
 			"mov %0, eax\n"
 		: "=m"(pdbr));
+
+		return pdbr;
 	}
 }

@@ -24,132 +24,109 @@ namespace kernel
 		Terminal::WriteString(fmt);
 	}
 
-	void Exception::DivideByZeroFault(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::DivideByZeroFault(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Divide by 0");
 		while(true);
 	}
 
-	void Exception::SingleStepTrap(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::SingleStepTrap(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Single step");
 		while(true);
 	}
 
-	void Exception::NmiTrap(unsigned int cs, unsigned int eip, unsigned int eflags) 
+	void Exception::NmiTrap(unsigned int, unsigned int, unsigned int) 
 	{
 		KernelPanic("NMI trap");
 		while(true);
 	}
 
-	void Exception::BreakpointTrap(unsigned int cs,unsigned int eip, unsigned int eflags) 
+	void Exception::BreakpointTrap(unsigned int,unsigned int, unsigned int) 
 	{
 		KernelPanic("Breakpoint trap");
 		while(true);
 	}
 
-	void Exception::OverflowTrap(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::OverflowTrap(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Overflow trap");
 		while(true);
 	}
 
-	void Exception::BoundsCheckFault(unsigned int cs, unsigned int eip, unsigned int eflags) 
+	void Exception::BoundsCheckFault(unsigned int, unsigned int, unsigned int) 
 	{
 		KernelPanic("Bounds check fault");
 		while(true);
 	}
 
-	void Exception::InvalidOpcodeFault(unsigned int cs, unsigned int eip, unsigned int eflags) 
+	void Exception::InvalidOpcodeFault(unsigned int, unsigned int, unsigned int) 
 	{
 		KernelPanic("Invalid opcode");
 		while(true);
 	}
 
-	void Exception::NoDeviceFault(unsigned int cs, unsigned int eip, unsigned int eflags) 
+	void Exception::NoDeviceFault(unsigned int, unsigned int, unsigned int) 
 	{
 		KernelPanic("Device not found");
 		while(true);
 	}
 
-	void Exception::DoubleFaultAbort(unsigned int cs, unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::DoubleFaultAbort(unsigned int, unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Double fault");
 		while(true);
 	}
 
-	void Exception::InvalidTssFault(unsigned int cs,unsigned int err,  unsigned int eip, unsigned int eflags)
+	void Exception::InvalidTssFault(unsigned int, unsigned int,  unsigned int, unsigned int)
 	{
 		KernelPanic("Invalid TSS");
 		while(true);
 	}
 
-	void Exception::NoSegmentFault(unsigned int cs,unsigned int err,  unsigned int eip, unsigned int eflags)
+	void Exception::NoSegmentFault(unsigned int, unsigned int,  unsigned int, unsigned int)
 	{
 		KernelPanic("Invalid segment");
 		while(true);
 	}
 
-	void Exception::StackFault(unsigned int cs,unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::StackFault(unsigned int, unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Stack fault");
 		while(true);
 	}
 
-	void Exception::GeneralProtectionFault(unsigned int cs,unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::GeneralProtectionFault(unsigned int, unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("General Protection Fault\n");
-		unsigned bit0 = (1 << 0) & err;
-		unsigned bit1 = (1 << 1) & err;
-		unsigned bit2 = (1 << 2) & err;
-		unsigned bit3 = (1 << 3) & err;
-		unsigned bit4 = (1 << 4) & err;
-		unsigned bit5 = (1 << 5) & err;
-		unsigned bit6 = (1 << 6) & err;
-		unsigned bit7 = (1 << 7) & err;
-		unsigned bit8 = (1 << 8) & err;
-		unsigned bit9 = (1 << 9) & err;
-		unsigned bit10 = (1 << 10) & err;
-		unsigned bit11 = (1 << 11) & err;
-		unsigned bit12 = (1 << 12) & err;
-		unsigned bit13 = (1 << 13) & err;
-		unsigned bit14 = (1 << 14) & err;
-		unsigned bit15 = (1 << 15) & err;
-		printf("Error Code Bits 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n", bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7, bit8, bit9, bit10, bit11, bit12, bit13, bit14, bit15);
-		printf("cs: 0x%x\nerr: 0x%x\neip: 0x%x\neflags: 0x%x", cs, err, eip, eflags);
 		while(true);
 	}
 
-	void Exception::PageFault(unsigned int cs, unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::PageFault(unsigned int, unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Page Fault\n");
-		unsigned bit0 = (1 << 0) & err;
-		unsigned bit1 = (1 << 1) & err;
-		unsigned bit2 = (1 << 2) & err;
-		printf("%i %i %i", bit0, bit1, bit2);
-		printf("%x %x %x", cs, eip, eflags);
 		while(true);
 	}
 
-	void Exception::FpuFault(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::FpuFault(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("FPU Fault");
 		while(true);
 	}
 
-	void Exception::AlignmentCheckFault(unsigned int cs,unsigned int err, unsigned int eip, unsigned int eflags)
+	void Exception::AlignmentCheckFault(unsigned int,unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Alignment Check");
 		while(true);
 	}
 
-	void Exception::MachineCheckAbort(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::MachineCheckAbort(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("Machine Check");
 		while(true);
 	}
 
-	void Exception::SimdFpuFault(unsigned int cs, unsigned int eip, unsigned int eflags)
+	void Exception::SimdFpuFault(unsigned int, unsigned int, unsigned int)
 	{
 		KernelPanic("FPU SIMD fault");
 		while(true);

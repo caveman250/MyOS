@@ -278,7 +278,7 @@ namespace kernel::hal::drivers
 
 	KeyCode Keyboard::GetLastKeyCode() 
 	{
-		return (m_CurrentScanCode != s_InvalidScancode) ? ((KeyCode)s_KeyboardScanCodes [m_CurrentScanCode]) : (KeyCode::Unknown);
+		return (m_CurrentScanCode != s_InvalidScancode) ? ((KeyCode)s_KeyboardScanCodes[(int)m_CurrentScanCode]) : (KeyCode::Unknown);
 	}
 
 	void Keyboard::DiscardLastKeyCode()
@@ -386,6 +386,8 @@ namespace kernel::hal::drivers
 						case KeyCode::BackSlash:
 							key = (uint8_t)KeyCode::Bar;
 							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -488,6 +490,8 @@ namespace kernel::hal::drivers
 						case KeyCode::LeftAlt:
 						case KeyCode::RightAlt:
 							m_Alt = false;
+							break;
+						default:
 							break;
 					}
 				}
