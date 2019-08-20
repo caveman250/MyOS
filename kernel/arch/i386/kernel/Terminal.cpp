@@ -7,7 +7,7 @@
 #include <kernel/hal/HAL.h>
 #include <kernel/VGA.h>
 #include <kernel/Delay.h>
-
+#include <kernel/Tests/KernelTests.h>
 namespace kernel
 {
     static const size_t VGA_WIDTH = 80;
@@ -15,7 +15,7 @@ namespace kernel
 
     static size_t s_Row;
     static size_t s_Column;
-    static uint8_t s_Colour;
+    uint8_t Terminal::s_Colour;
     static uint16_t* s_Buffer;
     static bool s_HardwareCursorUpdatesEnabled;
 
@@ -228,7 +228,36 @@ namespace kernel
 			WriteString(" - exit: quit and pause the system\n");
 			WriteString(" - clear: clear the screen\n");
 			WriteString(" - help: display this message\n");
+            WriteString(" - test: run a kernel\n");
 		}
+        else if(strcmp(cmd_buf, "test") == 0)
+        {
+            WriteString("\nInvalid test - enter test help for list of tests.\n");
+        }
+        else if(strcmp(cmd_buf, "test help") == 0)
+        {
+            WriteString("\nAvailable tests:\n");
+			WriteString(" - memory_map: show the physical memory map provided by GRUB\n");
+			WriteString(" - paging: show some info related to paging\n");
+			WriteString(" - allocations: test physical memory allocations\n");
+            WriteString(" - software_interrupt: throw an unhandled software interrupt\n");
+        }
+        else if(strcmp(cmd_buf, "test memory_map") == 0)
+        {
+            KernelTests::MemoryMap();
+        }
+        else if(strcmp(cmd_buf, "test paging") == 0)
+        {
+            KernelTests::Paging();
+        }
+        else if(strcmp(cmd_buf, "test allocations") == 0)
+        {
+            KernelTests::Allocations();
+        }
+        else if(strcmp(cmd_buf, "test software_interrupt") == 0)
+        {
+            KernelTests::SoftwareInterrupt();
+        }
 		else 
 		{
 			WriteString("\nUnkown command");

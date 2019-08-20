@@ -493,7 +493,6 @@ namespace kernel::hal
 				}
 				else 
 				{
-					m_CurrentScanCode = code;
 					KeyCode key = s_KeyboardScanCodes[code];
 
 					//check if a modifier key was pressed
@@ -524,6 +523,9 @@ namespace kernel::hal
 
 						case KeyCode::ScrollLock:
 							ToggleScrollLock();
+							break;
+						default:
+							m_CurrentScanCode = code;
 							break;
 					}
 				}

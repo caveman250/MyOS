@@ -34,6 +34,7 @@ $(ARCHDIR)/kernel/MemoryManagement/PhysicalMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/VirtualMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/PageDirectoryEntry.o \
 $(ARCHDIR)/kernel/MemoryManagement/PageTableEntry.o \
+$(ARCHDIR)/kernel/Tests/KernelTests.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \
