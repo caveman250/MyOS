@@ -4,10 +4,14 @@
 
 #include <vendor/multiboot.h>
 
-#include <kernel/kernel.h>
 #include <kernel/MemoryManagement/PhysicalMemoryManager.h>
+#include <kernel/MemoryManagement/VirtualMemoryManager.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/Terminal.h>
+
+extern uint32_t kernelStart;
+extern uint32_t kernelEnd;
+
 
 namespace kernel
 {
@@ -60,8 +64,10 @@ namespace kernel
     {
         Terminal::ClearScreen();
         printf("Paging Test\n\n");
-        printf("\nKernel Start 0x%x:\n", &s_KernelStart);
-        printf("Paging Enabled: %s", memory::PhysicalMemoryManager::IsPagingEnabled() ? "true" : "false");
+        printf("Paging Enabled: %s\n\n", memory::PhysicalMemoryManager::IsPagingEnabled() ? "true" : "false");
+        printf("Kernel Start should be 3GB (0xC0000000) more than Kernel Start Physical\n");
+        printf("Kernel Start: 0x%x:\n", &kernelStart);
+        printf("Kernel Start Physical: 0x%x\n", memory::VirtualMemoryManager::GetPhysicalAddress((uint32_t)&kernelStart));
     }
 
     void KernelTests::Allocations()
@@ -69,18 +75,18 @@ namespace kernel
         Terminal::ClearScreen();
         printf("Allocations Test\n\n");
 
-        uint32_t* p = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlock ();
+        uint32_t* p = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlock();
         printf ("p allocated at 0x%x\n", &p);
 
-        uint32_t* p2 = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlocks (2);
+        uint32_t* p2 = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlocks(2);
         printf ("allocated 2 blocks for p2 at 0x%x\n", &p2);
 
-        memory::PhysicalMemoryManager::FreeBlock (p);
+        memory::PhysicalMemoryManager::FreeBlock(p);
         p = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlock  ();
         printf ("Unallocated p to free block 1. p is reallocated to 0x%x\n", &p);
 
-        memory::PhysicalMemoryManager::FreeBlock (p);
-        memory::PhysicalMemoryManager::FreeBlocks (p2, 2);
+        memory::PhysicalMemoryManager::FreeBlock(p);
+        memory::PhysicalMemoryManager::FreeBlocks(p2, 2);
     }
 
     void KernelTests::SoftwareInterrupt()

@@ -29,6 +29,8 @@ namespace kernel::memory
 		static bool AllocatePage(PageTableEntry& PageTableEntry);
 		static void FreePage(PageTableEntry& PageTableEntry);
 
+		static physical_addr GetPhysicalAddress(virtual_addr addr);
+
 	private:
 		static bool SwitchPageDirectory(PageDirectory* directory);
 		static PageDirectory* GetPageDirectory();

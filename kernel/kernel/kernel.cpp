@@ -1,4 +1,3 @@
-#include <kernel/kernel.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,9 +18,6 @@ namespace kernel
 {
 	void Init(unsigned int, multiboot_info_t* mbt) 
 	{
-		s_KernelStart = kernelStart;
-		s_KernelEnd = kernelEnd;
-
 		Terminal::Init();
 
 		hal::HAL::Initialise();

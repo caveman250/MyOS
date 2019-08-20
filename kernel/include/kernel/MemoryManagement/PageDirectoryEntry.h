@@ -10,8 +10,8 @@ namespace kernel::memory
 	class PageDirectoryEntry
 	{
 	public:
-		enum Flags {
-
+		enum class Flags 
+		{
 			PRESENT	= 1, 		//0000000000000000000000000000001
 			WRITABLE = 2, 		//0000000000000000000000000000010
 			USER = 4,			//0000000000000000000000000000100

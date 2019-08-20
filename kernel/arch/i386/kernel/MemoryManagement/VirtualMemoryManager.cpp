@@ -97,16 +97,35 @@ namespace kernel::memory
       memset(dir, 0, sizeof(PageDirectory));
 
       PageDirectoryEntry& pde = dir->m_Entries[GetPageDirectoryIndex(0xc0000000)];
-      pde.AddAttribute(PageDirectoryEntry::Flags::PRESENT);
-      pde.AddAttribute(PageDirectoryEntry::Flags::WRITABLE);
+      pde.AddAttribute((uint32_t)PageDirectoryEntry::Flags::PRESENT);
+      pde.AddAttribute((uint32_t)PageDirectoryEntry::Flags::WRITABLE);
       pde.SetFrame((physical_addr)table);
 
       PageDirectoryEntry& pde2 = dir->m_Entries[GetPageDirectoryIndex(0x00000000)];
-      pde2.AddAttribute(PageDirectoryEntry::Flags::PRESENT);
-      pde2.AddAttribute(PageDirectoryEntry::Flags::WRITABLE);
+      pde2.AddAttribute((uint32_t)PageDirectoryEntry::Flags::PRESENT);
+      pde2.AddAttribute((uint32_t)PageDirectoryEntry::Flags::WRITABLE);
       pde2.SetFrame((physical_addr)table2);
 
       SwitchPageDirectory(dir);
       PhysicalMemoryManager::SetPagingEnabled(true);
+   }
+
+   physical_addr VirtualMemoryManager::GetPhysicalAddress(virtual_addr addr)
+   {
+      int dirIndex = GetPageDirectoryIndex(addr);
+      if(PageDirectoryEntry* pde = &(s_CurrentDirectory->m_Entries[dirIndex]))
+      {
+         physical_addr pdeFrameAddr = pde->GetFrameAddress();
+         if(PageTable* pageTable = (PageTable*)pdeFrameAddr)
+         {
+            int tableIndex = GetPageTableIndex(addr);
+            if(PageTableEntry* pte = &(pageTable->m_Entries[tableIndex]))
+            {
+               return pte->GetFrameAddress();
+            }
+         }
+      }
+
+      return 0;
    }
 }
