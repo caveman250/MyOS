@@ -5,34 +5,36 @@
 
 namespace kernel::memory
 {
-	constexpr uint32_t BLOCKS_PER_BYTE = 8;
-	constexpr uint32_t BLOCK_SIZE = 4096;
-	constexpr uint32_t BLOCK_ALIGN = BLOCK_SIZE;
+	PhysicalMemoryManager PhysicalMemoryManager::s_Instance;
 
-	uint32_t s_MemorySize = 0;
-	uint32_t s_UsedMemoryBlocks = 0;
-	uint32_t s_MaxMemoryBlocks = 0;
-	uint32_t* s_MemoryMap = 0;
+	PhysicalMemoryManager::PhysicalMemoryManager()
+		: m_MemorySize(0)
+		, m_UsedMemoryBlocks(0)
+		, m_MaxMemoryBlocks(0)
+		, m_MemoryMap(nullptr)
+	{
+
+	}
 
 	void PhysicalMemoryManager::Initialise(size_t memSize, physical_addr bitmap)
 	{
-		s_MemorySize = memSize;
-		s_MemoryMap = (uint32_t*)bitmap;
-		s_MaxMemoryBlocks = (GetMemorySize() * 1024) / BLOCK_SIZE;
-		s_UsedMemoryBlocks = s_MaxMemoryBlocks;
+		m_MemorySize = memSize;
+		m_MemoryMap = (uint32_t*)bitmap;
+		m_MaxMemoryBlocks = (GetMemorySize() * 1024) / s_BlockSize;
+		m_UsedMemoryBlocks = m_MaxMemoryBlocks;
 
-		memset(s_MemoryMap, 0xf, GetTotalBlockCount() / BLOCKS_PER_BYTE);
+		memset(m_MemoryMap, 0xf, GetTotalBlockCount() / s_BlocksPerByte);
 	}
 
 	void PhysicalMemoryManager::InitialiseRegion(physical_addr base, size_t size)
 	{
-		int align = base / BLOCK_SIZE;
-		int blocks = size / BLOCK_SIZE;
+		int align = base / s_BlockSize;
+		int blocks = size / s_BlockSize;
 
 		for (; blocks >= 0; blocks--) 
 		{
 			UnSetMemoryMapBit(align++);
-			s_UsedMemoryBlocks--;
+			m_UsedMemoryBlocks--;
 		}
 
 		SetMemoryMapBit(0);	//first block is always set. This ensures allocs cant be 0
@@ -40,13 +42,13 @@ namespace kernel::memory
 
 	void PhysicalMemoryManager::DeInitialiseRegion(physical_addr base, size_t size)
 	{
-		int align = base / BLOCK_SIZE;
-		int blocks = size / BLOCK_SIZE;
+		int align = base / s_BlockSize;
+		int blocks = size / s_BlockSize;
 
 		for (; blocks >= 0; blocks--) 
 		{
 			SetMemoryMapBit(align++);
-			s_UsedMemoryBlocks++;
+			m_UsedMemoryBlocks++;
 		}
 	}
 
@@ -64,8 +66,8 @@ namespace kernel::memory
 
 		SetMemoryMapBit(bit);
 
-		physical_addr addr = bit * BLOCK_SIZE;
-		s_UsedMemoryBlocks++;
+		physical_addr addr = bit * s_BlockSize;
+		m_UsedMemoryBlocks++;
 
 		return (void*)addr;
 	}
@@ -73,11 +75,11 @@ namespace kernel::memory
 	void PhysicalMemoryManager::FreeBlock(void* p) 
 	{
 		physical_addr addr = (physical_addr)p;
-		int bit = addr / BLOCK_SIZE;
+		int bit = addr / s_BlockSize;
 
 		UnSetMemoryMapBit(bit);
 
-		s_UsedMemoryBlocks--;
+		m_UsedMemoryBlocks--;
 	}
 
 	void* PhysicalMemoryManager::AllocateBlocks(size_t size)
@@ -95,8 +97,8 @@ namespace kernel::memory
 			SetMemoryMapBit(frame + i);
 		}
 
-		physical_addr addr = frame * BLOCK_SIZE;
-		s_UsedMemoryBlocks += size;
+		physical_addr addr = frame * s_BlockSize;
+		m_UsedMemoryBlocks += size;
 
 		return (void*)addr;
 	}
@@ -104,66 +106,66 @@ namespace kernel::memory
 	void PhysicalMemoryManager::FreeBlocks(void* p, size_t size)
 	{
 		physical_addr addr = (physical_addr)p;
-		int frame = addr / BLOCK_SIZE;
+		int frame = addr / s_BlockSize;
 
 		for (uint32_t i = 0; i < size; i++)
 		{
 			UnSetMemoryMapBit(frame + i);
 		}
 
-		s_UsedMemoryBlocks -= size;
+		m_UsedMemoryBlocks -= size;
 	}
 
 	size_t PhysicalMemoryManager::GetMemorySize() 
 	{
-		return s_MemorySize;
+		return m_MemorySize;
 	}
 
 	uint32_t PhysicalMemoryManager::GetTotalBlockCount()
 	{
-		return s_MaxMemoryBlocks;
+		return m_MaxMemoryBlocks;
 	}
 
 	uint32_t PhysicalMemoryManager::GetUsedBlockCount() 
 	{
-		return s_UsedMemoryBlocks;
+		return m_UsedMemoryBlocks;
 	}
 
 	uint32_t PhysicalMemoryManager::GetFreeBlockCount()
 	{
-		return s_MaxMemoryBlocks - s_UsedMemoryBlocks;
+		return m_MaxMemoryBlocks - m_UsedMemoryBlocks;
 	}
 
 	uint32_t PhysicalMemoryManager::GetBlockSize ()
 	{
-		return BLOCK_SIZE;
+		return s_BlockSize;
 	}
 
-	inline void PhysicalMemoryManager::SetMemoryMapBit(int bit) 
+	void PhysicalMemoryManager::SetMemoryMapBit(int bit) 
 	{
-		s_MemoryMap[bit / 32] |= (1 << (bit % 32));
+		m_MemoryMap[bit / 32] |= (1 << (bit % 32));
 	}
 
-	inline void PhysicalMemoryManager::UnSetMemoryMapBit(int bit) 
+	void PhysicalMemoryManager::UnSetMemoryMapBit(int bit) 
 	{
-		s_MemoryMap[bit / 32] &= ~ (1 << (bit % 32));
+		m_MemoryMap[bit / 32] &= ~ (1 << (bit % 32));
 	}
 
-	inline bool PhysicalMemoryManager::IsMemoryMapBitSet(int bit)
+	bool PhysicalMemoryManager::IsMemoryMapBitSet(int bit)
 	{
-		return s_MemoryMap[bit / 32] &  (1 << (bit % 32));
+		return m_MemoryMap[bit / 32] &  (1 << (bit % 32));
 	}
 
 	int PhysicalMemoryManager::GetFirstFreeMemoryMapBit()
 	{
 		for (uint32_t i = 0; i < GetTotalBlockCount() / 32; i++)
 		{
-			if (s_MemoryMap[i] != 0xffffffff)
+			if (m_MemoryMap[i] != 0xffffffff)
 			{
 				for (int j = 0; j < 32; j++) 
 				{
 					int bit = 1 << j;
-					if (!(s_MemoryMap[i] & bit))
+					if (!(m_MemoryMap[i] & bit))
 					{
 						return i * 4 * 8 + j;
 					}
@@ -184,12 +186,12 @@ namespace kernel::memory
 
 		for (uint32_t i = 0; i < GetTotalBlockCount() / 32; i++)
 		{
-			if (s_MemoryMap[i] != 0xffffffff)
+			if (m_MemoryMap[i] != 0xffffffff)
 			{
 				for (int j = 0; j < 32; j++)
 				{
 					int bit = 1 << j;
-					if (!(s_MemoryMap[i] & bit))
+					if (!(m_MemoryMap[i] & bit))
 					{
 						int startingBit = i * 32;
 						startingBit += bit; //get the free bit in the dword at index i
@@ -241,13 +243,11 @@ namespace kernel::memory
 			"mov	%0, eax\n"
 		: "=m"(res));
 
-		return (res & 0x80010000) ? true : false;
+		return (res & 0x80000000) ? true : false;
 	}
 
 	void PhysicalMemoryManager::LoadPDBR(physical_addr addr)
 	{
-		//printf("LoadPDBR addr 0x%x\n", addr);
-
 		asm volatile (
 			"mov eax, %0\n"
 			"mov cr3, eax\n"		// PDBR is cr3 register in i86

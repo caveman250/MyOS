@@ -28,8 +28,8 @@ $(ARCHDIR)/kernel/hal/PIC.o \
 $(ARCHDIR)/kernel/hal/PIT.o \
 $(ARCHDIR)/kernel/hal/PIT_ASM.o \
 $(ARCHDIR)/kernel/Exception.o \
-$(ARCHDIR)/kernel/hal/Keyboard.o \
-$(ARCHDIR)/kernel/hal/Keyboard_ASM.o \
+$(ARCHDIR)/kernel/hal/drivers/Keyboard.o \
+$(ARCHDIR)/kernel/hal/drivers/Keyboard_ASM.o \
 $(ARCHDIR)/kernel/MemoryManagement/PhysicalMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/VirtualMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/PageDirectoryEntry.o \

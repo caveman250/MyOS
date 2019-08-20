@@ -6,19 +6,21 @@
 
 namespace kernel::hal
 {
+	HAL HAL::s_Instance;
+
 	void HAL::Initialise() 
 	{
-		CPU::Initialise();
-		PIC::Initialise(0x20, 0x28);
-		PIT::Initialise();
-		PIT::StartCounter(100, (uint8_t)PIT::Counter::COUNTER_0, (uint8_t)PIT::CounterMode::SQUAREWAVEGEN);
+		CPU::Get().Initialise();
+		PIC::Get().Initialise(0x20, 0x28);
+		PIT::Get().Initialise();
+		PIT::Get().StartCounter(100, (uint8_t)PIT::Counter::Counter0, (uint8_t)PIT::CounterMode::SqureWaveGen);
 
 		EnableInterrupts();
 	}
 
 	void HAL::Shutdown()
 	{
-		CPU::Shutdown();
+		CPU::Get().Shutdown();
 	}
 
 	void HAL::InterruptFinished(unsigned int intno) 
@@ -30,11 +32,11 @@ namespace kernel::hal
 		//do we need to notify the second pic?
 		if (intno >= 8)
 		{
-			PIC::SendCommand((uint8_t)PIC::CommandWord2Mask::EOI, 1);
+			PIC::Get().SendCommand((uint8_t)PIC::CommandWord2Mask::EndOfInterrupt, 1);
 		}
 
 		//always send end-of-interrupt to primary pic
-		PIC::SendCommand((uint8_t)PIC::CommandWord2Mask::EOI, 0);
+		PIC::Get().SendCommand((uint8_t)PIC::CommandWord2Mask::EndOfInterrupt, 0);
 	}
 
 	void HAL::Sound(unsigned frequency) 
@@ -71,12 +73,12 @@ namespace kernel::hal
 	void HAL::SetInterruptRoutine(int intno, uint32_t vect) 
 	{
 		//install interrupt handler. This overwrites default interrupt handler
-		IDT::InstallInterruptRoutine(intno, (uint16_t)IDT::IDTDescriptorBit::PRESENT | (uint16_t)IDT::IDTDescriptorBit::BIT32, 0x8, vect);
+		IDT::Get().InstallInterruptRoutine(intno, (uint16_t)IDT::IDTDescriptorBit::Present | (uint16_t)IDT::IDTDescriptorBit::Bit32, 0x8, vect);
 	}
 
 	void (*HAL::GetInterruptRoutine(int intno))() 
 	{
-		IDT::Descriptor* desc = IDT::GetInterruptDescriptor(intno);
+		IDT::Descriptor* desc = IDT::Get().GetInterruptDescriptor(intno);
 		if (!desc)
 		{
 			return 0;
@@ -90,11 +92,11 @@ namespace kernel::hal
 	
 	const char* HAL::GetCpuVendor() 
 	{
-		return CPU::GetVendor();
+		return CPU::Get().GetVendor();
 	}
 
 	int HAL::GetTickCount() 
 	{
-		return PIT::GetTickCount();
+		return PIT::Get().GetTickCount();
 	}
 }

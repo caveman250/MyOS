@@ -55,19 +55,19 @@ namespace kernel
 		}
 
         printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n\n",
-			memory::PhysicalMemoryManager::GetTotalBlockCount(), 
-			memory::PhysicalMemoryManager::GetUsedBlockCount(), 
-			memory::PhysicalMemoryManager::GetFreeBlockCount());
+			memory::PhysicalMemoryManager::Get().GetTotalBlockCount(), 
+			memory::PhysicalMemoryManager::Get().GetUsedBlockCount(), 
+			memory::PhysicalMemoryManager::Get().GetFreeBlockCount());
     }
 
     void KernelTests::Paging()
     {
         Terminal::ClearScreen();
         printf("Paging Test\n\n");
-        printf("Paging Enabled: %s\n\n", memory::PhysicalMemoryManager::IsPagingEnabled() ? "true" : "false");
+        printf("Paging Enabled: %s\n\n", memory::PhysicalMemoryManager::Get().IsPagingEnabled() ? "true" : "false");
         printf("Kernel Start should be 3GB (0xC0000000) more than Kernel Start Physical\n");
         printf("Kernel Start: 0x%x:\n", &kernelStart);
-        printf("Kernel Start Physical: 0x%x\n", memory::VirtualMemoryManager::GetPhysicalAddress((uint32_t)&kernelStart));
+        printf("Kernel Start Physical: 0x%x\n", memory::VirtualMemoryManager::Get().GetPhysicalAddress((uint32_t)&kernelStart));
     }
 
     void KernelTests::Allocations()
@@ -75,18 +75,18 @@ namespace kernel
         Terminal::ClearScreen();
         printf("Allocations Test\n\n");
 
-        uint32_t* p = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlock();
+        uint32_t* p = (uint32_t*)memory::PhysicalMemoryManager::Get().AllocateBlock();
         printf ("p allocated at 0x%x\n", &p);
 
-        uint32_t* p2 = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlocks(2);
+        uint32_t* p2 = (uint32_t*)memory::PhysicalMemoryManager::Get().AllocateBlocks(2);
         printf ("allocated 2 blocks for p2 at 0x%x\n", &p2);
 
-        memory::PhysicalMemoryManager::FreeBlock(p);
-        p = (uint32_t*)memory::PhysicalMemoryManager::AllocateBlock  ();
+        memory::PhysicalMemoryManager::Get().FreeBlock(p);
+        p = (uint32_t*)memory::PhysicalMemoryManager::Get().AllocateBlock();
         printf ("Unallocated p to free block 1. p is reallocated to 0x%x\n", &p);
 
-        memory::PhysicalMemoryManager::FreeBlock(p);
-        memory::PhysicalMemoryManager::FreeBlocks(p2, 2);
+        memory::PhysicalMemoryManager::Get().FreeBlock(p);
+        memory::PhysicalMemoryManager::Get().FreeBlocks(p2, 2);
     }
 
     void KernelTests::SoftwareInterrupt()

@@ -6,14 +6,18 @@
 
 #include <stdint.h>
 
-namespace kernel
+namespace kernel::hal
 {
     class CPU
     {
     public:
-        static void Initialise ();
-        static void Shutdown ();
-        static const char* GetVendor();
+        static CPU& Get() { return s_Instance; }
+        void Initialise ();
+        void Shutdown ();
+        const char* GetVendor();
+
+    private:
+        static CPU s_Instance;
     };
 
     extern "C" const char* cpu_get_vendor();

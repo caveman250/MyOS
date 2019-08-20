@@ -9,33 +9,47 @@ namespace kernel::memory
     class PhysicalMemoryManager
     {
     public:
-        static void Initialise(size_t, physical_addr);
-        static void InitialiseRegion(physical_addr, size_t);
-        static void	DeInitialiseRegion(physical_addr base, size_t);
+        static PhysicalMemoryManager& Get() { return s_Instance; }
 
-        static void* AllocateBlock();
-        static void FreeBlock(void*);
-        static void* AllocateBlocks(size_t);
-        static void FreeBlocks(void*, size_t);
+        PhysicalMemoryManager();
 
-        static size_t GetMemorySize();
+        void Initialise(size_t, physical_addr);
+        void InitialiseRegion(physical_addr, size_t);
+        void DeInitialiseRegion(physical_addr base, size_t);
 
-        static uint32_t GetUsedBlockCount();
-        static uint32_t GetFreeBlockCount();
-        static uint32_t GetTotalBlockCount();
-        static uint32_t GetBlockSize();
+        void* AllocateBlock();
+        void FreeBlock(void*);
+        void* AllocateBlocks(size_t);
+        void FreeBlocks(void*, size_t);
 
-        static void	SetPagingEnabled(bool);
-        static bool	IsPagingEnabled();
-        static void	LoadPDBR(physical_addr);
-        static physical_addr GetPDBR();
+        size_t GetMemorySize();
+
+        uint32_t GetUsedBlockCount();
+        uint32_t GetFreeBlockCount();
+        uint32_t GetTotalBlockCount();
+        uint32_t GetBlockSize();
+
+        void	SetPagingEnabled(bool);
+        bool	IsPagingEnabled();
+        void	LoadPDBR(physical_addr);
+        physical_addr GetPDBR();
 
     private:
-        static inline void SetMemoryMapBit(int bit);
-        static inline void UnSetMemoryMapBit(int bit);
-        static inline bool IsMemoryMapBitSet(int bit);
+        int GetFirstFreeMemoryMapBit();
+        int GetFirstFreeMemoryMapAreaOfSize(size_t size);
 
-        static int GetFirstFreeMemoryMapBit();
-        static int GetFirstFreeMemoryMapAreaOfSize(size_t size);
+        inline void SetMemoryMapBit(int bit);
+        inline void UnSetMemoryMapBit(int bit);
+        inline bool IsMemoryMapBitSet(int bit);
+
+       	static constexpr uint32_t s_BlocksPerByte = 8;
+        static constexpr uint32_t s_BlockSize = 4096;
+
+        uint32_t m_MemorySize;
+        uint32_t m_UsedMemoryBlocks;
+        uint32_t m_MaxMemoryBlocks;
+        uint32_t* m_MemoryMap;
+
+        static PhysicalMemoryManager s_Instance;
     };
 }

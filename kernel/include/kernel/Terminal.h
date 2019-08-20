@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <kernel/hal/Keyboard.h>
+#include <kernel/hal/drivers/Keyboard.h>
 
 namespace kernel
 {
@@ -24,7 +24,7 @@ namespace kernel
     private:
         static void PutEntryAt(char c, uint8_t color, size_t x, size_t y_);
 
-        static hal::KeyCode GetUserKeyCode();
+        static hal::drivers::KeyCode GetUserKeyCode();
         static void GetUserCommand(char* buf, int n);
         static bool RunUserCommand(char* cmd_buf);
 

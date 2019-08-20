@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace kernel::hal
+namespace kernel::hal::drivers
 {
 	enum class KeyCode 
 	{

@@ -47,7 +47,7 @@
 #define MULTIBOOT_MEMORY_INFO			0x00000002
 
 /* Must pass video information to OS.  */
-#define MULTIBOOT_VIDEO_MODE			0x00000004
+#define MULTIBOOT_VIDEO_Mode			0x00000004
 
 /* This flag indicates the use of the address fields in the header.  */
 #define MULTIBOOT_AOUT_KLUDGE			0x00010000
@@ -66,7 +66,7 @@
 /* These next two are mutually exclusive */
 
 /* is there a symbol table loaded? */
-#define MULTIBOOT_INFO_AOUT_SYMS		0x00000010
+#define MULTIBOOT_INFO_AOUT_SYMasterBuffer		0x00000010
 /* is there an ELF section header table? */
 #define MULTIBOOT_INFO_ELF_SHDR			0X00000020
 
@@ -87,7 +87,7 @@
 
 /* Is there video information?  */
 #define MULTIBOOT_INFO_VBE_INFO		        0x00000800
-#define MULTIBOOT_INFO_FRAMEBUFFER_INFO	        0x00001000
+#define MULTIBOOT_INFO_FrameBufferedFER_INFO	        0x00001000
 
 #ifndef ASM_FILE
 
@@ -114,7 +114,7 @@ struct multiboot_header
   multiboot_uint32_t bss_end_addr;
   multiboot_uint32_t entry_addr;
 
-  /* These are only valid if MULTIBOOT_VIDEO_MODE is set.  */
+  /* These are only valid if MULTIBOOT_VIDEO_Mode is set.  */
   multiboot_uint32_t mode_type;
   multiboot_uint32_t width;
   multiboot_uint32_t height;
@@ -196,9 +196,9 @@ struct multiboot_info
   multiboot_uint32_t framebuffer_width;
   multiboot_uint32_t framebuffer_height;
   multiboot_uint8_t framebuffer_bpp;
-#define MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED 0
-#define MULTIBOOT_FRAMEBUFFER_TYPE_RGB     1
-#define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT	2
+#define MULTIBOOT_FrameBufferedFER_TYPE_INDEXED 0
+#define MULTIBOOT_FrameBufferedFER_TYPE_RGB     1
+#define MULTIBOOT_FrameBufferedFER_TYPE_EGA_TEXT	2
   multiboot_uint8_t framebuffer_type;
   union
   {

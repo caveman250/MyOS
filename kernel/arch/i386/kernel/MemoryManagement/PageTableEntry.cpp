@@ -19,21 +19,21 @@ namespace kernel::memory
 
 	void PageTableEntry::SetFrame(physical_addr addr)
 	{
-		m_Entry = (m_Entry & ~(uint32_t)Flags::FRAME) | addr;
+		m_Entry = (m_Entry & ~(uint32_t)Flags::Frame) | addr;
 	}
 
 	bool PageTableEntry::IsPresent()
 	{
-		return m_Entry & (uint32_t)Flags::PRESENT;
+		return m_Entry & (uint32_t)Flags::Present;
 	}
 
 	bool PageTableEntry::IsWritable() 
 	{
-		return m_Entry & (uint32_t)Flags::WRITABLE;
+		return m_Entry & (uint32_t)Flags::Writable;
 	}
 
 	physical_addr PageTableEntry::GetFrameAddress()
 	{
-		return m_Entry & (uint32_t)Flags::FRAME;
+		return m_Entry & (uint32_t)Flags::Frame;
 	}
 }

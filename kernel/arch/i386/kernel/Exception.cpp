@@ -10,7 +10,7 @@ namespace kernel
 	void Exception::KernelPanic(const char* fmt, ...)
 	{
 		//TODO need a way of printing the args, should implement vsnprintf
-		hal::HAL::DisableInterrupts();
+		hal::HAL::Get().DisableInterrupts();
 
 		va_list args;
 

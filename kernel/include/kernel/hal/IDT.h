@@ -24,6 +24,27 @@ namespace kernel
 			uint16_t		m_BaseHi;
 		} __attribute__((packed));
 
+		enum class IDTDescriptorBit
+		{
+			Bit16 = 0x06,	//00000110
+			Bit32 = 0x0E,	//00001110
+			Ring1 = 0x40,	//01000000
+			Ring2 = 0x20,	//00100000
+			Ring3 = 0x60,	//01100000
+			Present	= 0x80	//10000000
+		};
+
+		static IDT& Get() { return s_Instance; }
+
+		void Initialise(uint16_t codeSel);
+
+		Descriptor* GetInterruptDescriptor(uint32_t i);
+		void InstallInterruptRoutine(uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq);
+
+	private:
+		//i86 defines 256 possible interrupt handlers
+		static constexpr int s_MaxInterrupts = 256;
+
 		struct IDTR 
 		{
 			//size of the interrupt descriptor table (idt)
@@ -33,22 +54,10 @@ namespace kernel
 			uint32_t		base;
 		} __attribute((packed));
 
-		//i86 defines 256 possible interrupt handlers
-		static constexpr int MAX_INTERRUPTS = 256;
+		Descriptor m_Idt[s_MaxInterrupts] __attribute__((aligned(8)));
+		IDTR m_Idtr __attribute__((aligned(8)));
 
-		static Descriptor* GetInterruptDescriptor(uint32_t i);
-		static void Initialise(uint16_t codeSel);
-		static void InstallInterruptRoutine(uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq);
-
-		enum class IDTDescriptorBit
-		{
-			BIT16 = 0x06,	//00000110
-			BIT32 = 0x0E,	//00001110
-			RING1 = 0x40,	//01000000
-			RING2 = 0x20,	//00100000
-			RING3 = 0x60,	//01100000
-			PRESENT	= 0x80	//10000000
-		};
+		static IDT s_Instance;
 	};
 
 	extern "C" void idt_install(uintptr_t);

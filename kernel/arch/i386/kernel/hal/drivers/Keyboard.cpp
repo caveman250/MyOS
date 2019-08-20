@@ -1,9 +1,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <kernel/hal/HAL.h>
-#include <kernel/hal/Keyboard.h>
+#include <kernel/hal/drivers/Keyboard.h>
 
-namespace kernel::hal
+namespace kernel::hal::drivers
 {
 	enum class EncoderIO
 	{
@@ -173,7 +173,7 @@ namespace kernel::hal
 
 	void Keyboard::Install(int irq) 
 	{
-		HAL::SetInterruptRoutine(irq, (uint32_t)keyboard_irq);
+		HAL::Get().SetInterruptRoutine(irq, (uint32_t)keyboard_irq);
 
 		//assume BAT test is good. irq handler will override this if need be.
 		m_BATTestResult = true;
@@ -422,7 +422,7 @@ namespace kernel::hal
 
 	uint8_t Keyboard::ControlReadStatus()
 	{
-		return HAL::InB((unsigned short)ControlIO::StatusRegister);
+		return HAL::Get().InB((unsigned short)ControlIO::StatusRegister);
 	}
 
 	void Keyboard::ControlSendCommand(uint8_t cmd)
@@ -432,12 +432,12 @@ namespace kernel::hal
 			//wait for input buffer
 		}
 
-		kernel::hal::HAL::OutB((unsigned short)ControlIO::CommandRegister, cmd);
+		kernel::hal::HAL::Get().OutB((unsigned short)ControlIO::CommandRegister, cmd);
 	}
 
 	uint8_t Keyboard::EncoderReadBuffer() 
 	{
-		return HAL::InB((unsigned short)EncoderIO::InputBuffer);
+		return HAL::Get().InB((unsigned short)EncoderIO::InputBuffer);
 	}
 
 	void Keyboard::EncoderSendCommand (uint8_t cmd)
@@ -447,7 +447,7 @@ namespace kernel::hal
 			//wait for input buffer
 		}
 
-		HAL::OutB((unsigned short)EncoderIO::CommandRegister, cmd);
+		HAL::Get().OutB((unsigned short)EncoderIO::CommandRegister, cmd);
 	}
 
 	void Keyboard::HandleInterrupt()
@@ -548,7 +548,7 @@ namespace kernel::hal
 			}
 		}
 
-		HAL::InterruptFinished(0);
+		HAL::Get().InterruptFinished(0);
 	}
 
 	extern "C" void keyboard_irq_main ()

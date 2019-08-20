@@ -2,12 +2,14 @@
 #include <kernel/hal/GDT.h>
 #include <kernel/hal/IDT.h>
 
-namespace kernel
+namespace kernel::hal
 {
+	CPU CPU::s_Instance;
+
 	void CPU::Initialise () 
 	{
-		GDT::Initialise();
-		IDT::Initialise(0x8);
+		GDT::Get().Initialise();
+		IDT::Get().Initialise(0x8);
 	}
 
 	void CPU::Shutdown () 

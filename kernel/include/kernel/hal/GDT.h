@@ -6,13 +6,16 @@
 
 #include <stdint.h>
 
-namespace kernel
+namespace kernel::hal
 {
 	class GDT
 	{
 	public:
-		static int Initialise ();
+		static GDT& Get() { return s_Instance; } 
+		
+		int Initialise();
 
+	private:
 		struct Descriptor 
 		{
 			//bits 0-15 of segment limit
@@ -35,31 +38,35 @@ namespace kernel
 			uint32_t m_Base;
 		} __attribute((packed));
 
-		//maximum amount of descriptors allowed
-		static constexpr uint8_t MAX_DESCRIPTORS = 3;
-
-	private:
 		enum class GDTDescriptorBit
 		{
-			ACCESS = 0x0001,		//00000001
-			READWRITE = 0x0002,		//00000010
-			EXPANSION = 0x0004,		//00000100
-			EXEC_CODE = 0x0008,		//00001000
-			CODEDATA = 0x0010,		//00010000
-			DPL = 0x0060,			//01100000
-			MEMORY = 0x0080			//10000000
+			Access = 0x0001,			//00000001
+			ReadWrite = 0x0002,			//00000010
+			Expansion = 0x0004,			//00000100
+			ExecuteCode = 0x0008,		//00001000
+			CodeData = 0x0010,			//00010000
+			PrivilegeLevel = 0x0060,	//01100000
+			Memory = 0x0080				//10000000
 		};
 
 		enum class GDTDescriptorGrandBit
 		{
-			LIMITHI_MASK = 0x0f,	//00001111
-			OS = 0x10,				//00010000
-			THIRTY_TWO_BIT = 0x40,	//01000000
-			FOUR_K = 0x80			//10000000
+			LimithiMask = 0x0f,			//00001111
+			OperatingSystem = 0x10,		//00010000
+			ThirtyTwoBit = 0x40,		//01000000
+			FourK = 0x80				//10000000
 		};
 
-		static void SetDescriptor(uint32_t i, uint64_t base, uint64_t limit, uint8_t access, uint8_t grand);
-		static Descriptor* GetDescriptor (int i);
+		void SetDescriptor(uint32_t i, uint64_t base, uint64_t limit, uint8_t access, uint8_t grand);
+		Descriptor* GetDescriptor (int i);
+
+		//maximum amount of descriptors allowed
+		static constexpr uint8_t s_MaxDescriptors = 3;
+		
+		Descriptor m_Gdt[s_MaxDescriptors] __attribute__((aligned(8)));
+		GDTR m_Gdtr __attribute__((aligned(8)));
+
+		static GDT s_Instance;
 	};
 
 	extern "C" void gdt_install (uintptr_t, uint16_t);

@@ -58,10 +58,10 @@ namespace kernel
     {
         uint16_t pos = s_Row * VGA_WIDTH + s_Column;
     
-        hal::HAL::OutB(0x3D4, 0x0F);
-        hal::HAL::OutB(0x3D5, (uint8_t) (pos & 0xFF));
-        hal::HAL::OutB(0x3D4, 0x0E);
-        hal::HAL::OutB(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+        hal::HAL::Get().OutB(0x3D4, 0x0F);
+        hal::HAL::Get().OutB(0x3D5, (uint8_t) (pos & 0xFF));
+        hal::HAL::Get().OutB(0x3D4, 0x0E);
+        hal::HAL::Get().OutB(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
     }
 
     void Terminal::Write(const char* data, size_t size) 
@@ -134,16 +134,18 @@ namespace kernel
 		}
     }
 
-    hal::KeyCode Terminal::GetUserKeyCode()
+    hal::drivers::KeyCode Terminal::GetUserKeyCode()
     {
-		hal::KeyCode key = hal::KeyCode::Unknown;
+		hal::drivers::KeyCode key = hal::drivers::KeyCode::Unknown;
 
 		//wait for input
-		while(key == hal::KeyCode::Unknown)
-			key = hal::Keyboard::Get().GetLastKeyCode();
+		while(key == hal::drivers::KeyCode::Unknown)
+        {
+			key = hal::drivers::Keyboard::Get().GetLastKeyCode();
+        }
 
 		//key press is handled by the idt, assume it was handled by this point since we didnt throw an exception.
-		hal::Keyboard::Get().DiscardLastKeyCode();
+		hal::drivers::Keyboard::Get().DiscardLastKeyCode();
 		return key;
     }
 
@@ -151,7 +153,7 @@ namespace kernel
     {
 		WriteString("\nCommand> ");
 
-		hal::KeyCode key = hal::KeyCode::Unknown;
+		hal::drivers::KeyCode key = hal::drivers::KeyCode::Unknown;
 		bool BufChar;
 
 		int i=0;
@@ -160,13 +162,13 @@ namespace kernel
 			BufChar = true;
 			key = GetUserKeyCode();
 
-			if (key == hal::KeyCode::Return)
+			if (key == hal::drivers::KeyCode::Return)
 			{
 				//command entered, stop parsing
 				break;
 			}
 
-			if (key == hal::KeyCode::BackSpace) 
+			if (key == hal::drivers::KeyCode::BackSpace) 
 			{
 				//dont buffer this char
 				BufChar = false;
@@ -196,7 +198,7 @@ namespace kernel
 
 			if (BufChar) 
 			{
-				char c = hal::Keyboard::Get().KeyCodeToAscii(key);
+				char c = hal::drivers::Keyboard::Get().KeyCodeToAscii(key);
 				if (c != 0) 
 				{
 					Terminal::PutChar(c);

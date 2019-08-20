@@ -11,26 +11,32 @@ namespace kernel::hal
     class HAL
     {
     public:
-        static void Initialise();
-        static void Shutdown ();
+        static HAL& Get() { return s_Instance; }
+
+        void Initialise();
+        void Shutdown ();
 
         //output sound to speaker
-        static void Sound(unsigned frequency);
+        void Sound(unsigned frequency);
 
         //read/write byte to/from device using port mapped io
-        static unsigned char InB(unsigned short portid);
-        static void OutB(unsigned short portid, unsigned char value);
+        unsigned char InB(unsigned short portid);
+        void OutB(unsigned short portid, unsigned char value);
 
-        static void EnableInterrupts();
-        static void DisableInterrupts();
+        void EnableInterrupts();
+        void DisableInterrupts();
 
-        static void SetInterruptRoutine(int intno, uint32_t vect);
-        static void	(*GetInterruptRoutine (int intno))();
+        void SetInterruptRoutine(int intno, uint32_t vect);
+        void (*GetInterruptRoutine(int intno))();
         //notifies hal interrupt is finished
-        static void InterruptFinished(unsigned int intno);
+        void InterruptFinished(unsigned int intno);
 
-        static const char* GetCpuVendor();
-        static int GetTickCount();
+        const char* GetCpuVendor();
+        int GetTickCount();
+
+    private:
+
+        static HAL s_Instance;
     };
 }
 

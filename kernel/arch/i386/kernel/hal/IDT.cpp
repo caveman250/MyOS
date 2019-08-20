@@ -7,8 +7,7 @@
 
 namespace kernel
 {
-	static IDT::Descriptor s_Idt [IDT::MAX_INTERRUPTS] __attribute__((aligned(8)));
-	static IDT::IDTR s_Idtr __attribute__((aligned(8)));
+	IDT IDT::s_Instance;
 
 	extern "C" void default_irq_handler() 
 	{
@@ -18,43 +17,43 @@ namespace kernel
 
 	void IDT::Initialise(uint16_t codeSel) 
 	{
-		s_Idtr.limit = sizeof (Descriptor) * MAX_INTERRUPTS -1;
-		s_Idtr.base	= (uint32_t)&s_Idt[0];
+		m_Idtr.limit = sizeof (Descriptor) * s_MaxInterrupts -1;
+		m_Idtr.base	= (uint32_t)&m_Idt[0];
 
 		//null out the idt
-		memset ((void*)&s_Idt[0], 0, sizeof (Descriptor) * MAX_INTERRUPTS-1);
+		memset ((void*)&m_Idt[0], 0, sizeof (Descriptor) * s_MaxInterrupts-1);
 
 		//register default handler for all interrupts
-		for (int i=0; i<MAX_INTERRUPTS; i++)
+		for (int i=0; i<s_MaxInterrupts; i++)
 		{
 			InstallInterruptRoutine (i, 
-				(uint16_t)IDTDescriptorBit::PRESENT | (uint16_t)IDTDescriptorBit::BIT32,
+				(uint16_t)IDTDescriptorBit::Present | (uint16_t)IDTDescriptorBit::Bit32,
 				codeSel, 
 				(uint32_t)default_irq_handler);
 		}
 
-		idt_install ((intptr_t)&s_Idtr);
+		idt_install ((intptr_t)&m_Idtr);
 	}
 
 	IDT::Descriptor* IDT::GetInterruptDescriptor(uint32_t i) 
 	{
-		if (i > MAX_INTERRUPTS)
+		if (i > s_MaxInterrupts)
 		{
 			return 0;
 		}
 
-		return &s_Idt[i];
+		return &m_Idt[i];
 	}
 
 	void IDT::InstallInterruptRoutine(uint32_t i, uint16_t flags, uint16_t sel, uint32_t irq) 
 	{
-		if (i > MAX_INTERRUPTS)
+		if (i > s_MaxInterrupts)
 			return;
 
-		s_Idt[i].m_BaseLo = irq & 0xffff;
-		s_Idt[i].m_BaseHi = (irq & 0xffff0000) >> 16;
-		s_Idt[i].m_Reserved = 0;
-		s_Idt[i].m_Flags = uint8_t(flags);
-		s_Idt[i].m_Sel = sel;
+		m_Idt[i].m_BaseLo = irq & 0xffff;
+		m_Idt[i].m_BaseHi = (irq & 0xffff0000) >> 16;
+		m_Idt[i].m_Reserved = 0;
+		m_Idt[i].m_Flags = uint8_t(flags);
+		m_Idt[i].m_Sel = sel;
 	}
 }

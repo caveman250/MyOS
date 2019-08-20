@@ -25,21 +25,27 @@ namespace kernel::memory
 			PageDirectoryEntry m_Entries[s_PagesPerDir];
 		};
 
-		static void Initialise();
-		static bool AllocatePage(PageTableEntry& PageTableEntry);
-		static void FreePage(PageTableEntry& PageTableEntry);
+		static VirtualMemoryManager& Get() { return s_Instance; }
 
-		static physical_addr GetPhysicalAddress(virtual_addr addr);
+		VirtualMemoryManager();
+
+		void Initialise();
+		bool AllocatePage(PageTableEntry& PageTableEntry);
+		void FreePage(PageTableEntry& PageTableEntry);
+
+		physical_addr GetPhysicalAddress(virtual_addr addr);
 
 	private:
-		static bool SwitchPageDirectory(PageDirectory* directory);
-		static PageDirectory* GetPageDirectory();
+		bool SwitchPageDirectory(PageDirectory* directory);
+		PageDirectory* GetPageDirectory();
 
 		static inline int GetPageDirectoryIndex(virtual_addr addr) { return (addr >> 22) & 0x3ff; }
 		static inline int GetPageTableIndex(virtual_addr addr) { return (addr >> 12) & 0x3ff; }
 		static inline void* GetPagePhysicalAddress(pd_entry* entry) { return (void*)(*entry & ~0xfff); }
 
-		static PageDirectory* s_CurrentDirectory;
-		static physical_addr s_CurrentPDBR;
+		PageDirectory* m_CurrentDirectory;
+		physical_addr m_CurrentPDBR;
+
+		static VirtualMemoryManager s_Instance;
 	};
 }

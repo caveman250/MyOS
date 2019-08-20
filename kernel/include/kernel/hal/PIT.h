@@ -6,63 +6,76 @@
 
 #include <stdint.h>
 
-namespace kernel
+namespace kernel::hal
 {
     class PIT
     {
     public:
-        enum class CommandMasks
-        {
-            BINCOUNT = 1,           //00000001
-            MODE = 0xE,		        //00001110
-            RL = 0x30,	            //00110000
-            COUNTER = 0xC0	        //11000000
-        };
+        static PIT& Get() {return s_Instance; }
 
-        enum class BinaryCountMode
+        void Initialise();
+        void SendCommand(uint8_t cmd);
+        void SendData(uint16_t data, uint8_t counter);
+        uint8_t ReadData(uint16_t counter);
+        
+        uint32_t GetTickCount();
+        void SetTickCount(uint32_t i);
+        void IncrementTickCount();
+
+        //starts a counter. Counter continues until this method is called again
+        void StartCounter(uint32_t freq, uint8_t counter, uint8_t mode);
+
+        enum class Counter
         {
-            BINARY = 0,		        //0
-            BCD = 1		            //1
+            Counter0 = 0,           //00000000
+            Counter1 = 0x40,        //01000000
+            Counter2 = 0x80         //10000000
         };
 
         enum class CounterMode
         {
-            TERMINALCOUNT = 0,      //0000
-            ONESHOT = 0x2,		    //0010
-            RATEGEN = 0x4,		    //0100
-            SQUAREWAVEGEN = 0x6,    //0110
-            SOFTWARETRIG = 0x8,	    //1000
-            HARDWARETRIG = 0xA 	    //1010
+            TerminalCount = 0,          //0000
+            OneShot = 0x2,		        //0010
+            RateGen = 0x4,		        //0100
+            SqureWaveGen = 0x6,         //0110
+            SoftwareTrigger = 0x8,	    //1000
+            HardwareTrigger = 0xA 	    //1010
+        };
+        
+    private: 
+        enum class CommandMasks
+        {
+            BinCount = 1,           //00000001
+            Mode = 0xE,		        //00001110
+            ReadLoad = 0x30,	            //00110000
+            Counter = 0xC0	        //11000000
+        };
+
+        enum class BinaryCountMode
+        {
+            Binary = 0,		        //0
+            BinaryCodedDecimal = 1  //1
         };
 
         enum class TransferType
         {
-           LATCH = 0,			    //000000
-           LSBONLY = 0x10,	        //010000
-           MSBONLY = 0x20,		    //100000
-           DATA = 0x30,		        //110000
+           Latch = 0,			                //000000
+           LeastSignificantByteOnly = 0x10,	    //010000
+           MostSignificantBitOnly = 0x20,		//100000
+           Data = 0x30,		                    //110000
         };
 
-        enum class Counter
+        enum class ControlRegisters
         {
-            COUNTER_0 = 0,	        //00000000
-            COUNTER_1 = 0x40,	    //01000000
-            COUNTER_2 = 0x80	    //10000000
+            Counter0 = 0x40,
+            Counter1 = 0x41,
+            Counter2 = 0x42,
+            Command = 0x43
         };
 
-        static void SendCommand(uint8_t cmd);
-        static void SendData(uint16_t data, uint8_t counter);
-        static uint8_t ReadData(uint16_t counter);
+        volatile uint32_t m_PitTicks;
 
-        //Sets new pit tick count and returns previous value
-        static uint32_t SetTickCount(uint32_t i);
-        static uint32_t GetTickCount();
-
-        //starts a counter. Counter continues until this method is called again
-        static void StartCounter(uint32_t freq, uint8_t counter, uint8_t mode);
-
-        //Initialise minidriver
-        static void Initialise();
+        static PIT s_Instance;
     };
     
     extern "C" void handle_irq();
