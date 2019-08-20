@@ -3,6 +3,9 @@ Simple Operating system hobby project
 
 current lines of code: 4296 (keeping track for lols)
 
+# Trello
+https://trello.com/b/Lh08g5r6/myos
+
 # Requirements:
 ## Unix Environment
 The makefile and build scripts currently assume you are using a Unix like shell. This could be fixed fairly easily, but for an out of the box experience you will need to be running on something like Mac or linux(or WSL).
