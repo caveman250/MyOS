@@ -1,7 +1,7 @@
 # MyOS
 Simple Operating system hobby project
 
-current lines of code: 4279 (keeping track for lols)
+current lines of code: 4296 (keeping track for lols)
 
 # Requirements:
 ## Linux Environment
