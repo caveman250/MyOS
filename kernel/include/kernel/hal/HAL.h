@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-namespace kernel
+namespace kernel::hal
 {
     class HAL
     {

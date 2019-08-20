@@ -23,6 +23,7 @@ string/memcpy.o \
 string/memmove.o \
 string/memset.o \
 string/strlen.o \
+string/strcmp.o \
 
 LIBK_OBJS=$(OBJS:.o=.libk.o)
 

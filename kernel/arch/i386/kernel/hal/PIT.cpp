@@ -21,13 +21,13 @@ namespace kernel
 	{
 		s_PitTicks++;
 
-		HAL::InterruptFinished(0);
+		hal::HAL::InterruptFinished(0);
 	}
 	
 	void PIT::Initialise()
 	{
 		//Install our interrupt handler (irq 0 uses interrupt 32)
-		kernel::HAL::SetInterruptRoutine(32, (uint32_t)handle_irq);
+		hal::HAL::SetInterruptRoutine(32, (uint32_t)handle_irq);
 	}
 
 	uint32_t PIT::SetTickCount(uint32_t i)
@@ -44,7 +44,7 @@ namespace kernel
 
 	void PIT::SendCommand(uint8_t cmd)
 	{
-		HAL::OutB((unsigned short)ControlRegisters::COMMAND, cmd);
+		hal::HAL::OutB((unsigned short)ControlRegisters::COMMAND, cmd);
 	}
 
 	void PIT::SendData(uint16_t data, uint8_t counter)
@@ -63,7 +63,7 @@ namespace kernel
 				break;
 		}
 
-		HAL::OutB(port, (uint8_t)data);
+		hal::HAL::OutB(port, (uint8_t)data);
 	}
 
 	uint8_t PIT::ReadData(uint16_t counter) 
@@ -82,7 +82,7 @@ namespace kernel
 				break;
 		}
 
-		return HAL::InB(port);
+		return hal::HAL::InB(port);
 	}
 
 	void PIT::StartCounter(uint32_t freq, uint8_t counter, uint8_t mode)

@@ -86,7 +86,7 @@ namespace kernel
 		}
 
 		uint8_t	reg = (picNum==1) ? (uint8_t)PIC2PortAddress::COMMAND : (uint8_t)PIC1PortAddress::COMMAND;
-		kernel::HAL::OutB(reg, cmd);
+		kernel::hal::HAL::OutB(reg, cmd);
 	}
 
 	void PIC::SendData(uint8_t data, uint8_t picNum)
@@ -97,7 +97,7 @@ namespace kernel
 		}
 
 		uint8_t	reg = (picNum == 1) ? (uint8_t)PIC2PortAddress::DATA : (uint8_t)PIC1PortAddress::DATA;
-		kernel::HAL::OutB(reg, data);
+		kernel::hal::HAL::OutB(reg, data);
 	}
 
 	uint8_t PIC::ReadData(uint8_t picNum)
@@ -108,14 +108,14 @@ namespace kernel
 		}
 
 		uint8_t	reg = (picNum == 1) ? (uint8_t)PIC2PortAddress::DATA : (uint8_t)PIC1PortAddress::DATA;
-		return kernel::HAL::InB(reg);
+		return kernel::hal::HAL::InB(reg);
 	}
 
 	void PIC::Initialise(uint8_t base0, uint8_t base1) 
 	{
 		uint8_t icw	= 0;
 
-		kernel::HAL::DisableInterrupts();
+		kernel::hal::HAL::DisableInterrupts();
 
 		//Begin initialization of PIC
 		icw = (icw & ~(uint8_t)InitialisationWord1Mask::INIT) | (uint8_t)InitialisationCommand1ControlBit::INIT_YES;

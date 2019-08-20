@@ -68,7 +68,7 @@ namespace kernel::memory
       memset (table2, 0, sizeof(PageTable));
 
       //1st 4mb are idenitity mapped
-      for (int i=0, frame=0x0, virt=0x00000000; i<1024; i++, frame+=4096, virt+=4096) 
+      for (int i=0, frame=0x0, virt=0x00000000; i < 1024; i++, frame+=4096, virt+=4096) 
       {
          PageTableEntry pte;
          pte.AddAttribute((uint32_t)PageTableEntry::Flags::PRESENT);
@@ -78,7 +78,7 @@ namespace kernel::memory
       }
 
       //map 0mb to 3gb (kernel)
-      for (int i=0, frame=0x0, virt=0xc0000000; i<1024; i++, frame+=4096, virt+=4096) 
+      for (int i=0, frame=0x0, virt=0xc0000000; i < 1024; i++, frame+=4096, virt+=4096) 
       {
          PageTableEntry pte;
          pte.AddAttribute((uint32_t)PageTableEntry::Flags::PRESENT);

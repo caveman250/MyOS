@@ -246,7 +246,7 @@ namespace kernel::memory
 
 	void PhysicalMemoryManager::LoadPDBR(physical_addr addr)
 	{
-		printf("LoadPDBR addr 0x%x\n", addr);
+		//printf("LoadPDBR addr 0x%x\n", addr);
 
 		asm volatile (
 			"mov eax, %0\n"

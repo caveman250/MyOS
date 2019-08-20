@@ -6,6 +6,7 @@
 
 #include <kernel/hal/HAL.h>
 #include <kernel/VGA.h>
+#include <kernel/Delay.h>
 
 namespace kernel
 {
@@ -18,7 +19,7 @@ namespace kernel
     static uint16_t* s_Buffer;
     static bool s_HardwareCursorUpdatesEnabled;
 
-    void Terminal::Init(void) 
+    void Terminal::Init() 
     {
         s_Buffer = (uint16_t*) 0x000B8000;
         
@@ -53,14 +54,14 @@ namespace kernel
         }
     }
 
-    void Terminal::UpdateCursor(int x, int y)
+    void Terminal::UpdateCursor()
     {
-        uint16_t pos = y * VGA_WIDTH + x;
+        uint16_t pos = s_Row * VGA_WIDTH + s_Column;
     
-        HAL::OutB(0x3D4, 0x0F);
-        HAL::OutB(0x3D5, (uint8_t) (pos & 0xFF));
-        HAL::OutB(0x3D4, 0x0E);
-        HAL::OutB(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+        hal::HAL::OutB(0x3D4, 0x0F);
+        hal::HAL::OutB(0x3D5, (uint8_t) (pos & 0xFF));
+        hal::HAL::OutB(0x3D4, 0x0E);
+        hal::HAL::OutB(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
     }
 
     void Terminal::Write(const char* data, size_t size) 
@@ -71,7 +72,7 @@ namespace kernel
         }
 
         if(s_HardwareCursorUpdatesEnabled)
-            UpdateCursor(s_Column, s_Row);
+            UpdateCursor();
     }
 
     void Terminal::WriteString(const char* data) 
@@ -94,7 +95,7 @@ namespace kernel
 
         s_Row = 0;
         s_Column = 0;
-        UpdateCursor(s_Column, s_Row);
+        UpdateCursor();
         SetHardwareCursorUpdateEnabled(true);
     }
 
@@ -102,6 +103,11 @@ namespace kernel
     {
         s_Row = row;
         s_Column = col;
+
+        if(s_HardwareCursorUpdatesEnabled)
+        {
+            UpdateCursor();
+        }
     }
 
     void Terminal::GetCursorPos(size_t& row, size_t& col)
@@ -113,6 +119,122 @@ namespace kernel
     void Terminal::SetHardwareCursorUpdateEnabled(bool enabled)
     {
         s_HardwareCursorUpdatesEnabled = enabled;
+    }
+    
+    void Terminal::Run()
+    {
+		char buffer[100];
+
+		while (true) 
+		{
+			GetUserCommand(buffer, 98);
+
+			if (RunUserCommand(buffer) == true)
+				break;
+		}
+    }
+
+    hal::KeyCode Terminal::GetUserKeyCode()
+    {
+		hal::KeyCode key = hal::KeyCode::Unknown;
+
+		//wait for input
+		while(key == hal::KeyCode::Unknown)
+			key = hal::Keyboard::Get().GetLastKeyCode();
+
+		//key press is handled by the idt, assume it was handled by this point since we didnt throw an exception.
+		hal::Keyboard::Get().DiscardLastKeyCode();
+		return key;
+    }
+
+    void Terminal::GetUserCommand(char* buf, int n)
+    {
+		WriteString("\nCommand> ");
+
+		hal::KeyCode key = hal::KeyCode::Unknown;
+		bool BufChar;
+
+		int i=0;
+		while (i < n) 
+		{
+			BufChar = true;
+			key = GetUserKeyCode();
+
+			if (key == hal::KeyCode::Return)
+			{
+				//command entered, stop parsing
+				break;
+			}
+
+			if (key == hal::KeyCode::BackSpace) 
+			{
+				//dont buffer this char
+				BufChar = false;
+
+				if (i > 0) 
+				{
+					size_t row, col;
+					Terminal::GetCursorPos(row, col);
+
+					if(col > 0)
+					{
+						col -= 1;
+					}
+					else 
+					{
+						row--;
+						col = 80;
+					}
+
+					Terminal::SetCursorPos(row, col);
+					Terminal::PutChar(' ');
+					Terminal::SetCursorPos(row, col);
+
+					i--;
+				}
+			}
+
+			if (BufChar) 
+			{
+				char c = hal::Keyboard::Get().KeyCodeToAscii(key);
+				if (c != 0) 
+				{
+					Terminal::PutChar(c);
+					Terminal::UpdateCursor();
+					buf [i++] = c;
+				}
+			}
+
+			Sleep(5);
+		}
+
+		//null terminate the string
+		buf [i] = '\0';
+    }
+
+    bool Terminal::RunUserCommand(char* cmd_buf)
+    {
+        if (strcmp(cmd_buf, "exit") == 0) 
+		{
+			return true;
+		}
+		else if (strcmp(cmd_buf, "clear") == 0) 
+		{
+			Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLUE));
+		}
+		else if(strcmp (cmd_buf, "help") == 0)
+		{
+			WriteString("\nAvailable commands:\n");
+			WriteString(" - exit: quit and pause the system\n");
+			WriteString(" - clear: clear the screen\n");
+			WriteString(" - help: display this message\n");
+		}
+		else 
+		{
+			WriteString("\nUnkown command");
+		}
+
+		return false;
     }
 }
 

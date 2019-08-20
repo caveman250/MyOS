@@ -10,7 +10,7 @@ namespace kernel
 	void Exception::KernelPanic(const char* fmt, ...)
 	{
 		//TODO need a way of printing the args, should implement vsnprintf
-		HAL::DisableInterrupts();
+		hal::HAL::DisableInterrupts();
 
 		va_list args;
 
@@ -22,8 +22,6 @@ namespace kernel
 		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::WHITE, VGA::Colour::RED));
 		Terminal::WriteString(disclamer);
 		Terminal::WriteString(fmt);
-
-		while(true);
 	}
 
 	void Exception::DivideByZeroFault(unsigned int cs, unsigned int eip, unsigned int eflags)
@@ -100,7 +98,25 @@ namespace kernel
 
 	void Exception::GeneralProtectionFault(unsigned int cs,unsigned int err, unsigned int eip, unsigned int eflags)
 	{
-		KernelPanic("General Protection Fault");
+		KernelPanic("General Protection Fault\n");
+		unsigned bit0 = (1 << 0) & err;
+		unsigned bit1 = (1 << 1) & err;
+		unsigned bit2 = (1 << 2) & err;
+		unsigned bit3 = (1 << 3) & err;
+		unsigned bit4 = (1 << 4) & err;
+		unsigned bit5 = (1 << 5) & err;
+		unsigned bit6 = (1 << 6) & err;
+		unsigned bit7 = (1 << 7) & err;
+		unsigned bit8 = (1 << 8) & err;
+		unsigned bit9 = (1 << 9) & err;
+		unsigned bit10 = (1 << 10) & err;
+		unsigned bit11 = (1 << 11) & err;
+		unsigned bit12 = (1 << 12) & err;
+		unsigned bit13 = (1 << 13) & err;
+		unsigned bit14 = (1 << 14) & err;
+		unsigned bit15 = (1 << 15) & err;
+		printf("Error Code Bits 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n", bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7, bit8, bit9, bit10, bit11, bit12, bit13, bit14, bit15);
+		printf("cs: 0x%x\nerr: 0x%x\neip: 0x%x\neflags: 0x%x", cs, err, eip, eflags);
 		while(true);
 	}
 

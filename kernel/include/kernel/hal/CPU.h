@@ -1,4 +1,4 @@
-#pragma onces
+#pragma once
 
 #if !defined(__i386__)
 #error "[cpu.h] platform not implimented. "
