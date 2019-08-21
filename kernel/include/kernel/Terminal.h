@@ -35,6 +35,8 @@ namespace kernel
         void GetUserCommand(char* buf, int n);
         bool RunUserCommand(char* cmd_buf);
 
+        void ScrollIfNecessary();
+
         static constexpr size_t s_VGAWidth = 80;
         static constexpr size_t s_VGAHeight = 25;
 

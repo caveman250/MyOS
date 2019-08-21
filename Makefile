@@ -1,4 +1,5 @@
-SYSROOT=$(shell pwd)/sysroot
+WORKINGDIR=$(shell pwd)
+SYSROOT=$(WORKINGDIR)/sysroot
 
 build: headers
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install && cd ../
@@ -8,7 +9,7 @@ run_bochs: image
 	bochs -f ./bochs/bochs_config -q
 
 run: image
-	qemu-system-i386 -cdrom myos.iso
+	qemu-system-i386 -cdrom myos.iso -serial file:$(WORKINGDIR)/serial.log
 
 headers:
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers

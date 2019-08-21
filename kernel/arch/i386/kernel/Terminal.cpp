@@ -54,14 +54,14 @@ namespace kernel
 
         PutEntryAt(c, m_Colour, m_Column, m_Row);
 
-        if (++m_Column == s_VGAWidth) 
-        {
-            m_Column = 0;
-            if (++m_Row == s_VGAHeight)
-            {
-                m_Row = 0;
-            }
-        }
+       if (++m_Column == s_VGAWidth) 
+       {
+           m_Column = 0;
+           if (++m_Row == s_VGAHeight)
+           {
+               m_Row = 0;
+           }
+       }
     }
 
     void Terminal::UpdateCursor()
@@ -79,6 +79,7 @@ namespace kernel
         for (size_t i = 0; i < size; i++)
         {
             PutChar(data[i]);
+            ScrollIfNecessary();
         }
 
         if(m_HardwareCursorUpdatesEnabled)
@@ -88,6 +89,32 @@ namespace kernel
     void Terminal::WriteString(const char* data) 
     {
         Write(data, strlen(data));
+    }
+
+    void Terminal::ScrollIfNecessary()
+    {
+        if (m_Row >= s_VGAHeight)
+        {
+            //prune the top row of the buffer
+            for (size_t y = 0; y < s_VGAHeight; y++) 
+            {
+                for (size_t x = 0; x < s_VGAWidth; x++) 
+                {
+                    const size_t index = y * s_VGAWidth + x;
+                    const size_t newValueIndex = (y + 1) * s_VGAWidth + x;
+                    if (y < s_VGAHeight -1)
+                    {
+                        m_Buffer[index] = m_Buffer[newValueIndex];
+                    }
+                    else
+                    {
+                        m_Buffer[index] = VGA::Entry(' ', m_Colour);
+                    }
+                }
+            }
+
+            m_Row = s_VGAHeight - 1;
+        }
     }
 
     void Terminal::ClearScreen(uint8_t colour)

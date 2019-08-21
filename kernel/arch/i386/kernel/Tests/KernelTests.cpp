@@ -17,8 +17,7 @@ namespace kernel
 {
     void KernelTests::MemoryMap()
     {
-        Terminal::Get().ClearScreen();
-        printf("Physical Memory Map Test\n\n");
+        printf("\nPhysical Memory Map Test\n\n");
 
         const char* MemoryTypeStrings[] = 
         {
@@ -54,7 +53,7 @@ namespace kernel
 			mapIndex++;
 		}
 
-        printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n\n",
+        printf("\nRegions initialised:\n    blocks: %i\n    used or reserved blocks: %i\n    free blocks: %i\n",
 			memory::PhysicalMemoryManager::Get().GetTotalBlockCount(), 
 			memory::PhysicalMemoryManager::Get().GetUsedBlockCount(), 
 			memory::PhysicalMemoryManager::Get().GetFreeBlockCount());
@@ -62,8 +61,7 @@ namespace kernel
 
     void KernelTests::Paging()
     {
-        Terminal::Get().ClearScreen();
-        printf("Paging Test\n\n");
+        printf("\nPaging Test\n\n");
         printf("Paging Enabled: %s\n\n", memory::PhysicalMemoryManager::Get().IsPagingEnabled() ? "true" : "false");
         printf("Kernel Start should be 3GB (0xC0000000) more than Kernel Start Physical\n");
         printf("Kernel Start: 0x%x:\n", &kernelStart);
@@ -72,8 +70,7 @@ namespace kernel
 
     void KernelTests::Allocations()
     {
-        Terminal::Get().ClearScreen();
-        printf("Allocations Test\n\n");
+        printf("\nAllocations Test\n\n");
 
         uint32_t* p = (uint32_t*)memory::PhysicalMemoryManager::Get().AllocateBlock();
         printf ("p allocated at 0x%x\n", &p);
