@@ -10,58 +10,68 @@
 #include <kernel/Tests/KernelTests.h>
 namespace kernel
 {
-    static const size_t VGA_WIDTH = 80;
-    static const size_t VGA_HEIGHT = 25;
+    Terminal Terminal::s_Instance;
 
-    static size_t s_Row;
-    static size_t s_Column;
-    uint8_t Terminal::s_Colour;
-    static uint16_t* s_Buffer;
-    static bool s_HardwareCursorUpdatesEnabled;
-
-    void Terminal::Init() 
+    Terminal::Terminal()
+        : m_SerialPort(hal::SerialPort::SerialPortAddress::Com1)
+        , m_Buffer(nullptr)
+        , m_Row(0)
+        , m_Column(0)
+        , m_Colour(0)
+        , m_HardwareCursorUpdatesEnabled(true)
     {
-        s_Buffer = (uint16_t*) 0x000B8000;
+    }
+
+    void Terminal::Initialise() 
+    {
+        m_Buffer = (uint16_t*)0x000B8000;
         
         ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLUE));
         SetHardwareCursorUpdateEnabled(true);
     }
 
+    void Terminal::InitialiseSerialPort()
+    {
+        m_SerialPort.Initialise();
+    }
+
     void Terminal::PutEntryAt(char c, uint8_t color, size_t x, size_t y) 
     {
-        const size_t index = y * VGA_WIDTH + x;
-        s_Buffer[index] = VGA::Entry(c, color);
+        const size_t index = y * s_VGAWidth + x;
+        m_Buffer[index] = VGA::Entry(c, color);
     }
 
     void Terminal::PutChar(char c) 
     {
+        m_SerialPort.Write(c);
+        
         if(c == '\n')
         {
-            s_Row++;
-            s_Column = 0;
+            m_Row++;
+            m_Column = 0;
             return;
         }
 
-        PutEntryAt(c, s_Colour, s_Column, s_Row);
+        PutEntryAt(c, m_Colour, m_Column, m_Row);
 
-        if (++s_Column == VGA_WIDTH) 
+        if (++m_Column == s_VGAWidth) 
         {
-            s_Column = 0;
-            if (++s_Row == VGA_HEIGHT)
+            m_Column = 0;
+            if (++m_Row == s_VGAHeight)
             {
-                s_Row = 0;
+                m_Row = 0;
             }
         }
     }
 
     void Terminal::UpdateCursor()
     {
-        uint16_t pos = s_Row * VGA_WIDTH + s_Column;
+        uint16_t pos = m_Row * s_VGAWidth + m_Column;
     
         hal::HAL::Get().OutB(0x3D4, 0x0F);
-        hal::HAL::Get().OutB(0x3D5, (uint8_t) (pos & 0xFF));
+        hal::HAL::Get().OutB(0x3D5, (uint8_t)(pos & 0xFF));
         hal::HAL::Get().OutB(0x3D4, 0x0E);
-        hal::HAL::Get().OutB(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+        hal::HAL::Get().OutB(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
     }
 
     void Terminal::Write(const char* data, size_t size) 
@@ -71,7 +81,7 @@ namespace kernel
             PutChar(data[i]);
         }
 
-        if(s_HardwareCursorUpdatesEnabled)
+        if(m_HardwareCursorUpdatesEnabled)
             UpdateCursor();
     }
 
@@ -82,29 +92,32 @@ namespace kernel
 
     void Terminal::ClearScreen(uint8_t colour)
     {
-        s_Colour = colour;
-
-        for (size_t y = 0; y < VGA_HEIGHT; y++) 
+        if(colour != 0)
         {
-            for (size_t x = 0; x < VGA_WIDTH; x++) 
+            m_Colour = colour;
+        }
+
+        for (size_t y = 0; y < s_VGAHeight; y++) 
+        {
+            for (size_t x = 0; x < s_VGAWidth; x++) 
             {
-                const size_t index = y * VGA_WIDTH + x;
-                s_Buffer[index] = VGA::Entry(' ', s_Colour);
+                const size_t index = y * s_VGAWidth + x;
+                m_Buffer[index] = VGA::Entry(' ', m_Colour);
             }
         }
 
-        s_Row = 0;
-        s_Column = 0;
+        m_Row = 0;
+        m_Column = 0;
         UpdateCursor();
         SetHardwareCursorUpdateEnabled(true);
     }
 
     void Terminal::SetCursorPos(size_t row, size_t col)
     {
-        s_Row = row;
-        s_Column = col;
+        m_Row = row;
+        m_Column = col;
 
-        if(s_HardwareCursorUpdatesEnabled)
+        if(m_HardwareCursorUpdatesEnabled)
         {
             UpdateCursor();
         }
@@ -112,13 +125,13 @@ namespace kernel
 
     void Terminal::GetCursorPos(size_t& row, size_t& col)
     {
-        row = s_Row;
-        col = s_Column;
+        row = m_Row;
+        col = m_Column;
     }
 
     void Terminal::SetHardwareCursorUpdateEnabled(bool enabled)
     {
-        s_HardwareCursorUpdatesEnabled = enabled;
+        m_HardwareCursorUpdatesEnabled = enabled;
     }
     
     void Terminal::Run()
@@ -271,5 +284,5 @@ namespace kernel
 
 extern "C" void terminal_write(const char* data, size_t size)
 {
-    kernel::Terminal::Write(data, size);
+    kernel::Terminal::Get().Write(data, size);
 }

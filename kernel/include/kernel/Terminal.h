@@ -3,32 +3,51 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kernel/hal/drivers/Keyboard.h>
+#include <kernel/hal/SerialPort.h>
 
 namespace kernel
 {
     class Terminal
     {
     public:
-        static void Init();
-        static void PutChar(char c);
-        static void Write(const char* data, size_t size);
-        static void WriteString(const char* data);
-        static void ClearScreen(uint8_t colour = s_Colour);
-        static void SetCursorPos(size_t row, size_t col);
-        static void GetCursorPos(size_t& row, size_t& col);
-        static void SetHardwareCursorUpdateEnabled(bool enabled);
-        static void UpdateCursor();
+        static Terminal& Get() { return s_Instance; }
+
+        Terminal();
+
+        void Initialise();
+        void InitialiseSerialPort();
+        void PutChar(char c);
+        void Write(const char* data, size_t size);
+        void WriteString(const char* data);
+        void ClearScreen(uint8_t colour = 0);
+        void SetCursorPos(size_t row, size_t col);
+        void GetCursorPos(size_t& row, size_t& col);
+        void SetHardwareCursorUpdateEnabled(bool enabled);
+        void UpdateCursor();
 
         //run interactive mode.
-        static void Run();
+        void Run();
+
     private:
-        static void PutEntryAt(char c, uint8_t color, size_t x, size_t y_);
+        void PutEntryAt(char c, uint8_t color, size_t x, size_t y_);
 
-        static hal::drivers::KeyCode GetUserKeyCode();
-        static void GetUserCommand(char* buf, int n);
-        static bool RunUserCommand(char* cmd_buf);
+        hal::drivers::KeyCode GetUserKeyCode();
+        void GetUserCommand(char* buf, int n);
+        bool RunUserCommand(char* cmd_buf);
 
-        static uint8_t s_Colour;
+        static constexpr size_t s_VGAWidth = 80;
+        static constexpr size_t s_VGAHeight = 25;
+
+        size_t m_Row;
+        size_t m_Column;
+        uint8_t m_Colour;
+        uint16_t* m_Buffer;
+        bool m_HardwareCursorUpdatesEnabled;
+
+        //used to output logs to a text f
+        hal::SerialPort m_SerialPort;
+
+        static Terminal s_Instance;
     };
 }
 

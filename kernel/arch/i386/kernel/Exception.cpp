@@ -19,9 +19,9 @@ namespace kernel
 
 		const char* disclamer="***MyOS Kernel Panic***\nError Code Bellow:\n\n";
 
-		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::WHITE, VGA::Colour::RED));
-		Terminal::WriteString(disclamer);
-		Terminal::WriteString(fmt);
+		Terminal::Get().ClearScreen(VGA::CreateColour(VGA::Colour::WHITE, VGA::Colour::RED));
+		Terminal::Get().WriteString(disclamer);
+		Terminal::Get().WriteString(fmt);
 	}
 
 	void Exception::DivideByZeroFault(unsigned int, unsigned int, unsigned int)

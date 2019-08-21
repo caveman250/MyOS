@@ -18,9 +18,9 @@ namespace kernel
 {
 	void Init(unsigned int, multiboot_info_t* mbt) 
 	{
-		Terminal::Init();
-
+		Terminal::Get().Initialise();
 		hal::HAL::Get().Initialise();
+		Terminal::Get().InitialiseSerialPort();
 
 		hal::HAL::Get().SetInterruptRoutine(0, (uint32_t)Exception::DivideByZeroFault);
 		hal::HAL::Get().SetInterruptRoutine(1, (uint32_t)Exception::SingleStepTrap);
@@ -79,9 +79,9 @@ namespace kernel
 	{
 		Init(magic, mbt);
 		printf("\nType help for a list of available commands.\n");
-		Terminal::Run();
+		Terminal::Get().Run();
 
-		Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLACK));
+		Terminal::Get().ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLACK));
 		printf("\nexit recieved, pausing...");
 		while(true);
 		return 0;
