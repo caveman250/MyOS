@@ -27,7 +27,7 @@ namespace kernel::hal
             while (!SerialRecieved())
             {}
 
-            HAL::Get().InB((unsigned short)m_Port);
+            return HAL::Get().InB((unsigned short)m_Port);
         }
 
         void SerialPort::Write(char c)

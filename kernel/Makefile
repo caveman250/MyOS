@@ -31,6 +31,8 @@ $(ARCHDIR)/kernel/hal/SerialPort.o \
 $(ARCHDIR)/kernel/Exception.o \
 $(ARCHDIR)/kernel/hal/drivers/Keyboard.o \
 $(ARCHDIR)/kernel/hal/drivers/Keyboard_ASM.o \
+$(ARCHDIR)/kernel/hal/drivers/FloppyDisk.o \
+$(ARCHDIR)/kernel/hal/drivers/FloppyDisk_ASM.o \
 $(ARCHDIR)/kernel/MemoryManagement/PhysicalMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/VirtualMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/PageDirectoryEntry.o \

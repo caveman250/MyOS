@@ -10,5 +10,6 @@ namespace kernel
         static void Paging();
         static void Allocations();
         static void SoftwareInterrupt();
+        static void ReadFloppyDiskSector();
     };
 }

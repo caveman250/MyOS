@@ -27,27 +27,32 @@ namespace kernel
 
         //run interactive mode.
         void Run();
+        void GetUserCommand(char* buf, int n);
 
     private:
         void PutEntryAt(char c, uint8_t color, size_t x, size_t y_);
 
         hal::drivers::KeyCode GetUserKeyCode();
-        void GetUserCommand(char* buf, int n);
         bool RunUserCommand(char* cmd_buf);
 
         void ScrollIfNecessary();
 
+        void ShowHelpMessage();
+        void ShowTestHelpMessage();
+
         static constexpr size_t s_VGAWidth = 80;
         static constexpr size_t s_VGAHeight = 25;
+
+        //used to output logs to a text file
+        hal::SerialPort m_SerialPort;
+
+        uint16_t* m_Buffer;
 
         size_t m_Row;
         size_t m_Column;
         uint8_t m_Colour;
-        uint16_t* m_Buffer;
-        bool m_HardwareCursorUpdatesEnabled;
 
-        //used to output logs to a text f
-        hal::SerialPort m_SerialPort;
+        bool m_HardwareCursorUpdatesEnabled;
 
         static Terminal s_Instance;
     };

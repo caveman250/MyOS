@@ -57,10 +57,8 @@ namespace kernel
        if (++m_Column == s_VGAWidth) 
        {
            m_Column = 0;
-           if (++m_Row == s_VGAHeight)
-           {
-               m_Row = 0;
-           }
+           ++m_Row;
+              ScrollIfNecessary();
        }
     }
 
@@ -167,6 +165,7 @@ namespace kernel
 
 		while (true) 
 		{
+            WriteString("\nCommand> ");
 			GetUserCommand(buffer, 98);
 
 			if (RunUserCommand(buffer) == true)
@@ -191,8 +190,6 @@ namespace kernel
 
     void Terminal::GetUserCommand(char* buf, int n)
     {
-		WriteString("\nCommand> ");
-
 		hal::drivers::KeyCode key = hal::drivers::KeyCode::Unknown;
 		bool BufChar;
 
@@ -266,23 +263,16 @@ namespace kernel
 		}
 		else if(strcmp (cmd_buf, "help") == 0)
 		{
-			WriteString("\nAvailable commands:\n");
-			WriteString(" - exit: quit and pause the system\n");
-			WriteString(" - clear: clear the screen\n");
-			WriteString(" - help: display this message\n");
-            WriteString(" - test: run a kernel\n");
+			ShowHelpMessage();
 		}
         else if(strcmp(cmd_buf, "test") == 0)
         {
-            WriteString("\nInvalid test - enter test help for list of tests.\n");
+            WriteString("\nInvalid test\n");
+            ShowTestHelpMessage();
         }
         else if(strcmp(cmd_buf, "test help") == 0)
         {
-            WriteString("\nAvailable tests:\n");
-			WriteString(" - memory_map: show the physical memory map provided by GRUB\n");
-			WriteString(" - paging: show some info related to paging\n");
-			WriteString(" - allocations: test physical memory allocations\n");
-            WriteString(" - software_interrupt: throw an unhandled software interrupt\n");
+            ShowTestHelpMessage();
         }
         else if(strcmp(cmd_buf, "test memory_map") == 0)
         {
@@ -300,12 +290,34 @@ namespace kernel
         {
             KernelTests::SoftwareInterrupt();
         }
+        else if (strcmp(cmd_buf, "test floppy_read_sector") == 0)
+        {
+            KernelTests::ReadFloppyDiskSector();
+        }
 		else 
 		{
 			WriteString("\nUnkown command");
 		}
 
 		return false;
+    }
+
+    void Terminal::ShowHelpMessage()
+    {
+        WriteString("\nAvailable commands:\n");
+        WriteString(" - exit: quit and pause the system\n");
+        WriteString(" - clear: clear the screen\n");
+        WriteString(" - help: display this message\n");
+        WriteString(" - test: run a kernel test\n");
+    }
+
+    void Terminal::ShowTestHelpMessage()
+    {
+        WriteString("\nAvailable tests:\n");
+        WriteString(" - memory_map: show the physical memory map provided by GRUB\n");
+        WriteString(" - paging: show some info related to paging\n");
+        WriteString(" - allocations: test physical memory allocations\n");
+        WriteString(" - software_interrupt: throw an unhandled software interrupt\n");
     }
 }
 

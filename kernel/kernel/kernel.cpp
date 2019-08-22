@@ -7,6 +7,7 @@
 #include <kernel/Terminal.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/hal/drivers/Keyboard.h>
+#include <kernel/hal/drivers/FloppyDisk.h>
 #include <kernel/Exception.h>
 #include <kernel/MemoryManagement/PhysicalMemoryManager.h>
 #include <kernel/MemoryManagement/VirtualMemoryManager.h>
@@ -73,6 +74,9 @@ namespace kernel
 		memory::VirtualMemoryManager::Get().Initialise();
 
 		hal::drivers::Keyboard::Get().Install(33);
+
+		hal::drivers::FloppyDisk::Get().SetWorkingDrive(0);
+		hal::drivers::FloppyDisk::Get().Install(38);
 	}
 
 	extern "C" int kernel_main(unsigned int magic, multiboot_info_t* mbt)
