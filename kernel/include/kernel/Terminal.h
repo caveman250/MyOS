@@ -36,12 +36,18 @@ namespace kernel
         bool RunUserCommand(char* cmd_buf);
 
         void ScrollIfNecessary();
+        void RemoveLastInputCharacter();
 
         void ShowHelpMessage();
         void ShowTestHelpMessage();
 
         static constexpr size_t s_VGAWidth = 80;
         static constexpr size_t s_VGAHeight = 25;
+
+        int m_CommandHistoryInsertIndex = 0;
+        int m_CommandHistoryIndex = 0;
+        static constexpr int s_CommandHistorySize = 500;
+        char* m_CommandHistory[s_CommandHistorySize];
 
         //used to output logs to a text file
         hal::SerialPort m_SerialPort;

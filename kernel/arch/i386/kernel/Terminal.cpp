@@ -3,11 +3,14 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <kernel/hal/HAL.h>
 #include <kernel/VGA.h>
 #include <kernel/Delay.h>
 #include <kernel/Tests/KernelTests.h>
+
+#include <kernel/MemoryManagement/PhysicalMemoryManager.h>
 namespace kernel
 {
     Terminal Terminal::s_Instance;
@@ -20,6 +23,10 @@ namespace kernel
         , m_Colour(0)
         , m_HardwareCursorUpdatesEnabled(true)
     {
+        for(int i = 0; i < s_CommandHistorySize; ++i)
+        {
+            m_CommandHistory[i] = nullptr;
+        }
     }
 
     void Terminal::Initialise() 
@@ -115,6 +122,26 @@ namespace kernel
         }
     }
 
+    void Terminal::RemoveLastInputCharacter()
+    {
+        size_t row, col;
+        GetCursorPos(row, col);
+
+        if(col > 0)
+        {
+            col -= 1;
+        }
+        else 
+        {
+            row--;
+            col = 80;
+        }
+
+        SetCursorPos(row, col);
+        PutChar(' ');
+        SetCursorPos(row, col);
+    }
+
     void Terminal::ClearScreen(uint8_t colour)
     {
         if(colour != 0)
@@ -190,7 +217,9 @@ namespace kernel
 
     void Terminal::GetUserCommand(char* buf, int n)
     {
-		hal::drivers::KeyCode key = hal::drivers::KeyCode::Unknown;
+        using namespace hal::drivers;
+
+		KeyCode key = KeyCode::Unknown;
 		bool BufChar;
 
 		int i=0;
@@ -199,36 +228,53 @@ namespace kernel
 			BufChar = true;
 			key = GetUserKeyCode();
 
-			if (key == hal::drivers::KeyCode::Return)
+			if (key == KeyCode::Return)
 			{
 				//command entered, stop parsing
 				break;
 			}
+            else if (key == KeyCode::Up || key == KeyCode::Down)
+            {
+                BufChar = false;
+                
+                while(i > 0)
+                {
+                    RemoveLastInputCharacter();
+                    i--;
+                }
 
-			if (key == hal::drivers::KeyCode::BackSpace) 
+                if (key == KeyCode::Up)
+                {
+                    m_CommandHistoryIndex = m_CommandHistoryIndex - 1 >= 0 ? m_CommandHistoryIndex - 1 : s_CommandHistorySize - 1;
+                }
+                else
+                {
+                    m_CommandHistoryIndex = m_CommandHistoryIndex + 1 <= s_CommandHistorySize - 1 ? m_CommandHistoryIndex + 1 : 0;
+                }
+
+                if (m_CommandHistory[m_CommandHistoryIndex] != nullptr)
+                {
+                    char* nextCommandHistoryValue = m_CommandHistory[m_CommandHistoryIndex];
+                    int len = strlen(nextCommandHistoryValue);
+
+                    for (int j = 0; j < len; ++j)
+                    {
+                        char val = nextCommandHistoryValue[j];
+                        PutChar(val);
+                        buf[i++] = val;
+                    }
+                }
+
+                UpdateCursor();
+            }
+			else if (key == KeyCode::BackSpace) 
 			{
 				//dont buffer this char
 				BufChar = false;
 
 				if (i > 0) 
 				{
-					size_t row, col;
-					Terminal::GetCursorPos(row, col);
-
-					if(col > 0)
-					{
-						col -= 1;
-					}
-					else 
-					{
-						row--;
-						col = 80;
-					}
-
-					Terminal::SetCursorPos(row, col);
-					Terminal::PutChar(' ');
-					Terminal::SetCursorPos(row, col);
-
+                    RemoveLastInputCharacter();
 					i--;
 				}
 			}
@@ -253,6 +299,11 @@ namespace kernel
 
     bool Terminal::RunUserCommand(char* cmd_buf)
     {
+        m_CommandHistory[m_CommandHistoryInsertIndex] = (char*)memory::PhysicalMemoryManager::Get().AllocateBlock();
+        memcpy(m_CommandHistory[m_CommandHistoryInsertIndex], cmd_buf, strlen(cmd_buf) + 1);
+        m_CommandHistoryIndex = m_CommandHistoryInsertIndex + 1;
+        m_CommandHistoryInsertIndex = (m_CommandHistoryInsertIndex + 1) % s_CommandHistorySize;
+
         if (strcmp(cmd_buf, "exit") == 0) 
 		{
 			return true;

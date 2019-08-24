@@ -3,6 +3,10 @@
 #include <kernel/hal/HAL.h>
 #include <kernel/hal/drivers/Keyboard.h>
 
+//uncommen for printf debugging
+//#include <stdio.h>
+
+
 namespace kernel::hal::drivers
 {
 	enum class EncoderIO
@@ -158,7 +162,7 @@ namespace kernel::hal::drivers
 		KeyCode::NumLock,		//0x45
 		KeyCode::ScrollLock,	//0x46
 		KeyCode::Home,			//0x47
-		KeyCode::Num8,			//0x48
+		KeyCode::Up,			//0x48
 		KeyCode::PageUp,		//0x49
 		KeyCode::Num2,			//0x50
 		KeyCode::Num3,			//0x51
@@ -166,7 +170,7 @@ namespace kernel::hal::drivers
 		KeyCode::NumDecimal,	//0x53
 		KeyCode::Unknown,		//0x54
 		KeyCode::Unknown,		//0x55
-		KeyCode::Unknown,		//0x56
+		KeyCode::Down,		//0x56
 		KeyCode::F11,			//0x57
 		KeyCode::F12			//0x58
 	};
@@ -278,6 +282,12 @@ namespace kernel::hal::drivers
 
 	KeyCode Keyboard::GetLastKeyCode() 
 	{
+		//if(m_CurrentScanCode != s_InvalidScancode)
+		//{
+		//	printf("%i\n", m_CurrentScanCode);
+		//	printf("%i\n", s_KeyboardScanCodes[(int)m_CurrentScanCode]);
+		//}
+
 		return (m_CurrentScanCode != s_InvalidScancode) ? ((KeyCode)s_KeyboardScanCodes[(int)m_CurrentScanCode]) : (KeyCode::Unknown);
 	}
 
