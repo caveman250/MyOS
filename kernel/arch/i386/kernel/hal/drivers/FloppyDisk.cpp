@@ -1,10 +1,12 @@
 #include <kernel/hal/drivers/FloppyDisk.h>
 #include <kernel/hal/HAL.h>
+#include <kernel/hal/DMAManager.h>
 #include <kernel/Delay.h>
 
 namespace kernel::hal::drivers
 {
     FloppyDisk FloppyDisk::s_Instance;
+    int FloppyDisk::s_DirectMemoryAccessBuffer = 0x1000;
 
     FloppyDisk::FloppyDisk()
         : m_CurrentDrive(0)
@@ -16,8 +18,6 @@ namespace kernel::hal::drivers
      void FloppyDisk::Install(int irq)
      {
         HAL::Get().SetInterruptRoutine(irq, (uint32_t)floppy_disk_handle_irq);
-
-        InitialiseDirectMemoryAccess();
 
         Reset();
 
@@ -68,34 +68,36 @@ namespace kernel::hal::drivers
         *sector = lba % s_SectorsPerTrack + 1;
     }
 
-    void FloppyDisk::InitialiseDirectMemoryAccess()
+    bool FloppyDisk::InitialiseDirectMemoryAccess(uint8_t* buffer, unsigned length)
     {
-        HAL& hal = HAL::Get();
-        hal.OutB(0x0a,0x06);	//mask dma channel 2
-	    hal.OutB(0xd8,0xff);	//reset master flip-flop
-        hal.OutB(0x04, 0);     //address=0x1000 
-        hal.OutB(0x04, 0x10);
-        hal.OutB(0xd8, 0xff);  //reset master flip-flop
-        hal.OutB(0x05, 0xff);  //count to 0x23ff (number of bytes in a 3.5" floppy disk track)
-        hal.OutB(0x05, 0x23);
-        hal.OutB(0x80, 0);     //external page register = 0
-        hal.OutB(0x0a, 0x02);  //unmask dma channel 2
+        union
+        {
+            uint8_t byte[4]; //Lo[0], Mid[1], Hi[2]
+            unsigned long l;
+        } a, c;
+        
+        a.l = (unsigned)buffer;
+        c.l = (unsigned)length-1;
+
+        DMAManager& dma = DMAManager::Get();
+        dma.Reset();
+        dma.MaskChannel(s_DirectMemoryAccessChannel);
+        dma.ResetFlipFlop(1);
+
+        dma.SetAddress(s_DirectMemoryAccessChannel, a.byte[0], a.byte[1]);
+        dma.ResetFlipFlop(1);
+
+        dma.SetCount(s_DirectMemoryAccessChannel, c.byte[0], c.byte[1]);
+        dma.SetRead(s_DirectMemoryAccessChannel);
+
+        dma.UnMaskAll();
+
+        return true;
     }
 
-    void FloppyDisk::DirectMemoryAccessRead()
+    void FloppyDisk::SetDirectMemoryAccessBuffer(int addr)
     {
-        HAL& hal = HAL::Get();
-        hal.OutB(0x0a, 0x06); //mask dma channel 2
-        hal.OutB(0x0b, 0x56); //single transfer, address increment, autoinit, read, channel 2
-        hal.OutB(0x0a, 0x02); //unmask dma channel 2
-    }
-
-    void FloppyDisk::DirectMemoryAccessWrite()
-    {
-        HAL& hal = HAL::Get();
-        hal.OutB(0x0a, 0x06); //mask dma channel 2
-	    hal.OutB(0x0b, 0x5a); //single transfer, address increment, autoinit, write, channel 2
-	    hal.OutB(0x0a, 0x02); //unmask dma channel 2
+        s_DirectMemoryAccessBuffer = addr;
     }
 
     uint8_t FloppyDisk::ReadStatus()
@@ -280,7 +282,8 @@ namespace kernel::hal::drivers
     {
         uint32_t st0, cyl;
 
-        DirectMemoryAccessRead();
+        InitialiseDirectMemoryAccess((uint8_t*)s_DirectMemoryAccessBuffer, 512);
+        DMAManager::Get().SetRead(s_DirectMemoryAccessChannel);
 
         SendCommand((uint8_t)Command::ReadSector | (uint8_t)CommandExt::MultiTrack | (uint8_t)CommandExt::Skip | (uint8_t)CommandExt::Density);
         SendCommand(head << 2 | m_CurrentDrive);

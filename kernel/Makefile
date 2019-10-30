@@ -28,6 +28,7 @@ $(ARCHDIR)/kernel/hal/PIC.o \
 $(ARCHDIR)/kernel/hal/PIT.o \
 $(ARCHDIR)/kernel/hal/PIT_ASM.o \
 $(ARCHDIR)/kernel/hal/SerialPort.o \
+$(ARCHDIR)/kernel/hal/DMAManager.o \
 $(ARCHDIR)/kernel/Exception.o \
 $(ARCHDIR)/kernel/hal/drivers/Keyboard.o \
 $(ARCHDIR)/kernel/hal/drivers/Keyboard_ASM.o \

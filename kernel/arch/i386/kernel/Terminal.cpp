@@ -369,6 +369,7 @@ namespace kernel
         WriteString(" - paging: show some info related to paging\n");
         WriteString(" - allocations: test physical memory allocations\n");
         WriteString(" - software_interrupt: throw an unhandled software interrupt\n");
+        WriteString(" - floppy_read_sector: read raw bytes from floppy disk drive\n");
     }
 }
 

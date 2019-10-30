@@ -23,9 +23,8 @@ namespace kernel::hal::drivers
         void HandleIrq();
 
     private:
-        void InitialiseDirectMemoryAccess();
-        void DirectMemoryAccessRead();
-        void DirectMemoryAccessWrite();
+        bool InitialiseDirectMemoryAccess(uint8_t* buffer, unsigned length);
+        void SetDirectMemoryAccessBuffer(int addr);
 
         uint8_t ReadStatus();
         void WriteDigitalOutputRegister(uint8_t val);
@@ -143,7 +142,8 @@ namespace kernel::hal::drivers
 
         static constexpr int s_FloppyIrq = 6;
         static constexpr int s_SectorsPerTrack = 18;
-        static constexpr int s_DirectMemoryAccessBuffer = 0x1000;
+        static int s_DirectMemoryAccessBuffer;
+        static constexpr int s_DirectMemoryAccessChannel = 2;
 
         static FloppyDisk s_Instance;
     };

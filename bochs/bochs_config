@@ -5,7 +5,7 @@ vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
  
 # boot from floppy using our disk image -------------------------------
  
-ata0-slave: type=cdrom, path=/home/ouchqt/Desktop/MyOS/myos.iso, status=inserted
+ata0-slave: type=cdrom, path=/home/ouchqt/Desktop/myos/myos.iso, status=inserted
 boot: cdrom
  
 # logging and reporting -----------------------------------------------
