@@ -5,6 +5,7 @@
 
 #include <kernel/VGA.h>
 #include <kernel/Terminal.h>
+#include <kernel/FAT12.h>
 #include <kernel/hal/HAL.h>
 #include <kernel/hal/drivers/Keyboard.h>
 #include <kernel/hal/drivers/FloppyDisk.h>
@@ -77,11 +78,14 @@ namespace kernel
 
 		hal::drivers::FloppyDisk::Get().SetWorkingDrive(0);
 		hal::drivers::FloppyDisk::Get().Install(38);
+
+		FAT12::Get().Initialise();
 	}
 
 	extern "C" int kernel_main(unsigned int magic, multiboot_info_t* mbt)
 	{
 		Init(magic, mbt);
+
 		printf("\nType help for a list of available commands.\n");
 		Terminal::Get().Run();
 

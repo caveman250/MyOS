@@ -9,6 +9,7 @@
 #include <kernel/VGA.h>
 #include <kernel/Delay.h>
 #include <kernel/Tests/KernelTests.h>
+#include <kernel/FileSystem.h>
 
 #include <kernel/MemoryManagement/PhysicalMemoryManager.h>
 namespace kernel
@@ -33,7 +34,7 @@ namespace kernel
     {
         m_Buffer = (uint16_t*)0x000B8000;
         
-        ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLUE));
+        ClearScreen(VGA::CreateColour(VGA::Colour::GREEN, VGA::Colour::BLACK));
         SetHardwareCursorUpdateEnabled(true);
     }
 
@@ -286,7 +287,7 @@ namespace kernel
 				{
 					Terminal::PutChar(c);
 					Terminal::UpdateCursor();
-					buf [i++] = c;
+					buf[i++] = c;
 				}
 			}
 
@@ -294,7 +295,12 @@ namespace kernel
 		}
 
 		//null terminate the string
-		buf [i] = '\0';
+		buf[i] = '\0';
+
+        while(++i < n)
+        {
+            buf[i] = ' ';
+        }
     }
 
     bool Terminal::RunUserCommand(char* cmd_buf)
@@ -310,40 +316,21 @@ namespace kernel
 		}
 		else if (strcmp(cmd_buf, "clear") == 0) 
 		{
-			Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::LIGHT_GREY, VGA::Colour::BLUE));
+			Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::GREEN, VGA::Colour::BLACK));
 		}
 		else if(strcmp (cmd_buf, "help") == 0)
 		{
 			ShowHelpMessage();
 		}
-        else if(strcmp(cmd_buf, "test") == 0)
+        else if(strstr(cmd_buf, "test") == &cmd_buf[0])
         {
-            WriteString("\nInvalid test\n");
-            ShowTestHelpMessage();
+            KernelTests::RunTest(&cmd_buf[5]);
         }
-        else if(strcmp(cmd_buf, "test help") == 0)
+        
+        else if (strstr(cmd_buf, "read") == &cmd_buf[0])
         {
-            ShowTestHelpMessage();
-        }
-        else if(strcmp(cmd_buf, "test memory_map") == 0)
-        {
-            KernelTests::MemoryMap();
-        }
-        else if(strcmp(cmd_buf, "test paging") == 0)
-        {
-            KernelTests::Paging();
-        }
-        else if(strcmp(cmd_buf, "test allocations") == 0)
-        {
-            KernelTests::Allocations();
-        }
-        else if(strcmp(cmd_buf, "test software_interrupt") == 0)
-        {
-            KernelTests::SoftwareInterrupt();
-        }
-        else if (strcmp(cmd_buf, "test floppy_read_sector") == 0)
-        {
-            KernelTests::ReadFloppyDiskSector();
+            //strlen("read ") = 5
+            ReadFile(&cmd_buf[5]);
         }
 		else 
 		{
@@ -360,16 +347,43 @@ namespace kernel
         WriteString(" - clear: clear the screen\n");
         WriteString(" - help: display this message\n");
         WriteString(" - test: run a kernel test\n");
+        WriteString(" - read: read a specified file");
     }
 
-    void Terminal::ShowTestHelpMessage()
+    void Terminal::ReadFile(const char* path)
     {
-        WriteString("\nAvailable tests:\n");
-        WriteString(" - memory_map: show the physical memory map provided by GRUB\n");
-        WriteString(" - paging: show some info related to paging\n");
-        WriteString(" - allocations: test physical memory allocations\n");
-        WriteString(" - software_interrupt: throw an unhandled software interrupt\n");
-        WriteString(" - floppy_read_sector: read raw bytes from floppy disk drive\n");
+        File file = FileSystemManager::Get().OpenFile(path);
+
+        if (file.m_Flags == FileSystemFlags::Invalid)
+        {
+            WriteString("\nUnable to open file");
+            return;
+        }
+
+        if (((int)file.m_Flags & (int)FileSystemFlags::Directory) == (int)FileSystemFlags::Directory) 
+        {
+            WriteString("\nReading Directory unsupported.");
+            return;
+        }
+
+        printf("\n\n%s:\n", file.m_Name);
+        while (file.m_EndOfFile != 1) 
+        {
+            //TODO Get length of file instead of assuming it is in 512 chunks
+            unsigned char buf[512];
+            FileSystemManager::Get().ReadFileChunk(&file, buf, 512);
+            for (int i = 0; i < 512; i++)
+            {
+                PutChar(buf[i]);
+            }
+
+            if (file.m_EndOfFile != 1) 
+            {
+                WriteString("\nPress any key to continue...");
+                GetUserKeyCode();
+                WriteString("\r");
+            }
+        }
     }
 }
 

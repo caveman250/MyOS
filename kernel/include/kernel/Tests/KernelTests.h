@@ -6,10 +6,13 @@ namespace kernel
     class KernelTests
     {
     public:
+        static void RunTest(const char* testName);
+    private:
         static void MemoryMap();
         static void Paging();
         static void Allocations();
         static void SoftwareInterrupt();
         static void ReadFloppyDiskSector();
+        static void ShowTestHelpMessage();
     };
 }

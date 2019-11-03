@@ -41,6 +41,8 @@ namespace kernel
         void ShowHelpMessage();
         void ShowTestHelpMessage();
 
+        void ReadFile(const char* fileName);
+
         static constexpr size_t s_VGAWidth = 80;
         static constexpr size_t s_VGAHeight = 25;
 

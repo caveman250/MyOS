@@ -8,6 +8,9 @@
 		"files.exclude": {
 			"**/*.d": true,
 			"sysroot": true
+		},
+		"files.associations": {
+			"STRSTR.C": "cpp"
 		}
 	}
 }

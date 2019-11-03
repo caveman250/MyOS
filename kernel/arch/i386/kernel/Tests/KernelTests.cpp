@@ -1,6 +1,7 @@
 #include <kernel/Tests/KernelTests.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <vendor/multiboot.h>
 
@@ -16,6 +17,40 @@ extern uint32_t kernelEnd;
 
 namespace kernel
 {
+    void KernelTests::RunTest(const char* testName)
+    {
+        if(strcmp(testName, "memory_map") == 0)
+        {
+            MemoryMap();
+        }
+        else if(strcmp(testName, "paging") == 0)
+        {
+            Paging();
+        }
+        else if(strcmp(testName, "allocations") == 0)
+        {
+            Allocations();
+        }
+        else if(strcmp(testName, "software_interrupt") == 0)
+        {
+            SoftwareInterrupt();
+        }
+        else if (strcmp(testName, "floppy_read_sector") == 0)
+        {
+            ReadFloppyDiskSector();
+        }
+        else if(strcmp(testName, "help") == 0)
+        {
+            ShowTestHelpMessage();
+        }
+        else
+        {
+            printf("\nInvalid test.");
+            ShowTestHelpMessage();
+        }
+        
+    }
+
     void KernelTests::MemoryMap()
     {
         printf("\nPhysical Memory Map Test\n\n");
@@ -125,6 +160,15 @@ namespace kernel
         {
             printf("error reading disk\n");
         }
-        
+    }
+
+    void KernelTests::ShowTestHelpMessage()
+    {
+        printf("\nAvailable tests:\n");
+        printf(" - memory_map: show the physical memory map provided by GRUB\n");
+        printf(" - paging: show some info related to paging\n");
+        printf(" - allocations: test physical memory allocations\n");
+        printf(" - software_interrupt: throw an unhandled software interrupt\n");
+        printf(" - floppy_read_sector: read raw bytes from floppy disk drive\n");
     }
 }

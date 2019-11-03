@@ -9,7 +9,7 @@ run_bochs: image
 	bochs -f ./bochs/bochs_config -q
 
 run: image
-	qemu-system-i386 -cdrom myos.iso -serial file:$(WORKINGDIR)/serial.log
+	qemu-system-i386 -cdrom myos.iso -fda floppy.img -serial file:$(WORKINGDIR)/serial.log -boot d
 
 headers:
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers
@@ -17,6 +17,7 @@ headers:
 
 image: build
 	sh create_iso.sh
+	sh create_floppy_image.sh
 
 .PHONY: clean
 

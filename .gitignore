@@ -9,3 +9,4 @@ sysroot
 *.a
 *.log
 
+floppy.img
