@@ -33,6 +33,12 @@ namespace kernel
     void Terminal::Initialise() 
     {
         m_Buffer = (uint16_t*)0x000B8000;
+
+        //Enable the harware cursor
+        hal::HAL::Get().OutB(0x3D4, 0x0A);
+        hal::HAL::Get().OutB(0x3D5, (hal::HAL::Get().InB(0x3D5) & 0xC0) | 0);
+        hal::HAL::Get().OutB(0x3D4, 0x0B);
+        hal::HAL::Get().OutB(0x3D5, (hal::HAL::Get().InB(0x3D5) & 0xE0) | 15);
         
         ClearScreen(VGA::CreateColour(VGA::Colour::GREEN, VGA::Colour::BLACK));
         SetHardwareCursorUpdateEnabled(true);
