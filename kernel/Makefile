@@ -7,8 +7,8 @@ CPPFLAGS = -D__is_kernel -Iinclude
 LIBS = -nostdlib -lk -lgcc
 
 SYSROOT? =
-CPP = i686-elf-g++ --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
-CC = i686-elf-gcc --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
+CPP = i686-elf-g++ -g --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
+CC = i686-elf-gcc -g --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
 
 ARCHDIR = arch/i386
 

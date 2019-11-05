@@ -8,8 +8,8 @@ LIBK_CFLAGS = $(CFLAGS)
 LIBK_CPPFLAGS = $(CPPFLAGS) -D__is_libk
 
 SYSROOT?=
-CPP = i686-elf-g++ --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
-CC = i686-elf-gcc --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
+CPP = i686-elf-g++ -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
+CC = i686-elf-gcc -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
 
 ARCHDIR=arch/i386
 

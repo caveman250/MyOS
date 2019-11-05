@@ -9,7 +9,7 @@ run_bochs: image
 	bochs -f ./bochs/bochs_config -q
 
 run: image
-	qemu-system-i386 -cdrom myos.iso -fda floppy.img -serial file:$(WORKINGDIR)/serial.log -boot d
+	gnome-terminal -- qemu-system-i386 -S -s -cdrom myos.iso -fda floppy.img -serial file:$(WORKINGDIR)/serial.log -boot d
 
 headers:
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers
