@@ -19,6 +19,9 @@ image: build
 	sh create_iso.sh
 	sh create_floppy_image.sh
 
+count_lines:
+	find . -name '*.c' -o -name '*.cpp' -o -name '*.asm' -o -name '*.sh' -o -name '*.h' | xargs wc -l
+
 .PHONY: clean
 
 clean:
