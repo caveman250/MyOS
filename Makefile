@@ -20,7 +20,7 @@ image: build
 	sh create_floppy_image.sh
 
 count_lines:
-	find . -name '*.c' -o -name '*.cpp' -o -name '*.asm' -o -name '*.sh' -o -name '*.h' | xargs wc -l
+	find . -name '*.c' -o -name '*.cpp' -o -name '*.asm' -o -name '*.sh' -o -name '*.h' -o -name 'Makefile' | xargs wc -l
 
 .PHONY: clean
 
