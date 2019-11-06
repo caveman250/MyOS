@@ -63,6 +63,18 @@ namespace kernel
         {
             m_Row++;
             m_Column = 0;
+            ScrollIfNecessary();
+            return;
+        }
+        else if(c == '\r')
+        {
+            m_Column = 0;
+            for(int i = 0; i < s_VGAWidth; ++i)
+            {
+                PutChar(' ');
+            }
+
+            m_Row--;
             return;
         }
 
@@ -72,7 +84,7 @@ namespace kernel
        {
            m_Column = 0;
            ++m_Row;
-              ScrollIfNecessary();
+           ScrollIfNecessary();
        }
     }
 
@@ -377,21 +389,29 @@ namespace kernel
         }
 
         printf("\n\n%s:\n", file.m_Name);
+
+        //read large files in 512 chunks
+        int chunksRead = 0;
         while (file.m_EndOfFile != 1) 
         {
-            //TODO Get length of file instead of assuming it is in 512 chunks
-            unsigned char buf[512];
-            FileSystemManager::Get().ReadFileChunk(&file, buf, 512);
-            for (int i = 0; i < 512; i++)
+            const int chunkSize = file.m_Length - (512 * chunksRead) > 512 ? 512 : file.m_Length- (512 * chunksRead);
+            unsigned char buf[chunkSize];
+            FileSystemManager::Get().ReadFileChunk(&file, buf, chunkSize);
+            for (int i = 0; i < chunkSize; i++)
             {
                 PutChar(buf[i]);
             }
 
             if (file.m_EndOfFile != 1) 
             {
+                int oldColumn = m_Column;
                 WriteString("\nPress any key to continue...");
                 GetUserKeyCode();
                 WriteString("\r");
+                chunksRead++;
+                m_Column = oldColumn;
+                m_Row--;
+                UpdateCursor();
             }
         }
     }
