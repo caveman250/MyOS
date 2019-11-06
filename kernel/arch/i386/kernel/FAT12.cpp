@@ -51,6 +51,32 @@ namespace kernel
         }
     }
 
+    void FAT12::FromFAT12FileName(const char* fat12Name, char* fileName)
+    {
+        int currFileNameIndex;
+
+        //file name
+        for (currFileNameIndex = 0; currFileNameIndex < 8; ++currFileNameIndex)
+        {
+            if(fat12Name[currFileNameIndex])
+            {
+                if(fat12Name[currFileNameIndex] == ' ')
+                {
+                    break;
+                }
+
+                fileName[currFileNameIndex] = tolower(fat12Name[currFileNameIndex]);
+            }
+        }
+
+        //extension
+        fileName[currFileNameIndex] = '.';
+        for (int i = 8; i < 11; ++i)
+        {
+            fileName[++currFileNameIndex] = tolower(fat12Name[i]);
+        }
+    }
+
     File FAT12::OpenDirectory(const char* directoryName)
     {
         File file;
@@ -294,6 +320,37 @@ namespace kernel
         File file;
         file.m_Flags = FileSystemFlags::Invalid;
         return file;
+    }
+
+    void FAT12::ListFilesInRootDirectory()
+    {
+        unsigned char* buf;
+        Directory* directory;
+
+        constexpr int sectorsPerDirectory = 14;
+        for (int sector = 0; sector < sectorsPerDirectory; ++sector) 
+        {
+            //Read root dir
+            buf = (unsigned char*) hal::drivers::FloppyDisk::Get().ReadSector(m_MountInfo.m_RootOffset + sector);
+            directory = (Directory*)buf;
+
+            constexpr int entriesPerSector = 16;
+            for (int entry = 0; entry < entriesPerSector; entry++)
+            {
+                char fileName[12] = {0};
+                memcpy(&fileName, directory->m_Filename, 11);
+                fileName[11] = '\0';
+
+                if(strlen(fileName) > 0 && strcmp(fileName, "WINVBLOCK  ") != 0)
+                {
+                    char nameForDisplay[12] = {0};
+                    FromFAT12FileName(fileName, nameForDisplay);
+                    printf("\n%s", nameForDisplay);
+                }
+
+                directory++;
+            }
+        }
     }
 
     void FAT12::Mount() 

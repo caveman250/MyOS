@@ -34,6 +34,14 @@ namespace kernel
         return file;
     }
 
+    void FileSystemManager::ListFilesInRootDirectory()
+    {
+        if (m_FileSystems[0]) 
+        {
+            m_FileSystems[0]->m_Driver->ListFilesInRootDirectory();
+        }
+    } 
+
     void FileSystemManager::ReadFileChunk(File* file, unsigned char* buffer, unsigned int length)
     {
         if (file)

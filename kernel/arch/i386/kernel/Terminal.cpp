@@ -338,6 +338,10 @@ namespace kernel
             //strlen("read ") = 5
             ReadFile(&cmd_buf[5]);
         }
+        else if(strcmp(cmd_buf, "ls") == 0)
+        {
+            FileSystemManager::Get().ListFilesInRootDirectory();
+        }
 		else 
 		{
 			WriteString("\nUnkown command");

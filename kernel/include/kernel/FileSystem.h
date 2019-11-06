@@ -43,6 +43,7 @@ namespace kernel
         static FileSystemManager& Get() { return s_Instance; }
 
         File OpenFile(const char* name);
+        void ListFilesInRootDirectory();
         void ReadFileChunk(File* file, unsigned char* buffer, unsigned int length);
         void CloseFile(File* file);
         void RegisterFileSystem(FileSystem*, unsigned int deviceID);

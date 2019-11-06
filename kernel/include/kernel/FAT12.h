@@ -55,12 +55,14 @@ namespace kernel
         File OpenDirectory(const char* directoryName);
         void ReadFileChunk(File* file, unsigned char* buffer, unsigned int length);
         File OpenFile(const char* fileName);
+        void ListFilesInRootDirectory();
         void Initialise();
         void Mount();
         void CloseFile(File* file);
     private:
         File OpenFileInSubDirectory(File subDirectory, const char* filename);
         void ToFAT12FileName(const char* fileName, char* fName, unsigned int fNameLength);
+        void FromFAT12FileName(const char* fat12Name, char* fileName);
 
         static constexpr int s_SectorSize = 512;
         FileSystem m_FATFileSystem;
