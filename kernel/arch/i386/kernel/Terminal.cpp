@@ -369,7 +369,8 @@ namespace kernel
         WriteString(" - clear: clear the screen\n");
         WriteString(" - help: display this message\n");
         WriteString(" - test: run a kernel test\n");
-        WriteString(" - read: read a specified file");
+        WriteString(" - read: read a specified file\n");
+        WriteString(" - ls: list files in root of floppy drive a (TODO other dirs)\n");
     }
 
     void Terminal::ReadFile(const char* path)

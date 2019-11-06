@@ -33,7 +33,7 @@
             "type": "shell",
             "label": "Run",
             "isBackground": true,
-            "command": "sh run_os.sh",
+            "command": "make run",
             "options": {
                 "cwd": "${workspaceRoot}"
             },

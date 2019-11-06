@@ -9,7 +9,7 @@ run_bochs: image
 	bochs -f ./bochs/bochs_config -q
 
 run: image
-	run_os.sh
+	sh run_os.sh
 
 headers:
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers
