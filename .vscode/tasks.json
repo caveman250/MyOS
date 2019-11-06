@@ -42,6 +42,7 @@
                 "fileLocation": ["relative", "${workspaceRoot}/kernel"],
                 "background": {
                     "activeOnStart": true,
+                    "beginsPattern": "start",
                     "endsPattern": "finish"
                 },
             }
