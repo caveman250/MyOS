@@ -10,3 +10,4 @@ sysroot
 *.log
 
 floppy.img
+nohup.out

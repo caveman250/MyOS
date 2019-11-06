@@ -32,15 +32,19 @@
         {
             "type": "shell",
             "label": "Run",
-            "group": "build",
-            "command": "make run",
+            "isBackground": true,
+            "command": "sh run_os.sh",
             "options": {
                 "cwd": "${workspaceRoot}"
             },
             "problemMatcher": {
                 "base": "$gcc",
                 "fileLocation": ["relative", "${workspaceRoot}/kernel"],
+                "background": {
+                    "activeOnStart": true,
+                    "endsPattern": "finish"
+                },
             }
-        }
+        },
     ]
 }
