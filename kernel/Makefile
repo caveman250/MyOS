@@ -14,26 +14,26 @@ ARCHDIR = arch/i386
 
 KERNEL_OBJS=\
 kernel/kernel.o\
-$(ARCHDIR)/boot.o \
+$(ARCHDIR)/boot.asmo \
 $(ARCHDIR)/kernel/Terminal.o \
 $(ARCHDIR)/kernel/hal/HAL.o \
-$(ARCHDIR)/kernel/hal/HAL_ASM.o \
+$(ARCHDIR)/kernel/hal/HAL.asmo \
 $(ARCHDIR)/kernel/hal/GDT.o \
-$(ARCHDIR)/kernel/hal/GDT_ASM.o \
+$(ARCHDIR)/kernel/hal/GDT.asmo \
 $(ARCHDIR)/kernel/hal/IDT.o \
-$(ARCHDIR)/kernel/hal/IDT_ASM.o \
+$(ARCHDIR)/kernel/hal/IDT.asmo \
 $(ARCHDIR)/kernel/hal/CPU.o \
-$(ARCHDIR)/kernel/hal/CPU_ASM.o \
+$(ARCHDIR)/kernel/hal/CPU.asmo \
 $(ARCHDIR)/kernel/hal/PIC.o \
 $(ARCHDIR)/kernel/hal/PIT.o \
-$(ARCHDIR)/kernel/hal/PIT_ASM.o \
+$(ARCHDIR)/kernel/hal/PIT.asmo \
 $(ARCHDIR)/kernel/hal/SerialPort.o \
 $(ARCHDIR)/kernel/hal/DMAManager.o \
 $(ARCHDIR)/kernel/Exception.o \
 $(ARCHDIR)/kernel/hal/drivers/Keyboard.o \
-$(ARCHDIR)/kernel/hal/drivers/Keyboard_ASM.o \
+$(ARCHDIR)/kernel/hal/drivers/Keyboard.asmo \
 $(ARCHDIR)/kernel/hal/drivers/FloppyDisk.o \
-$(ARCHDIR)/kernel/hal/drivers/FloppyDisk_ASM.o \
+$(ARCHDIR)/kernel/hal/drivers/FloppyDisk.asmo \
 $(ARCHDIR)/kernel/MemoryManagement/PhysicalMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/VirtualMemoryManager.o \
 $(ARCHDIR)/kernel/MemoryManagement/PageDirectoryEntry.o \
@@ -43,22 +43,27 @@ $(ARCHDIR)/kernel/FileSystem.o \
 $(ARCHDIR)/kernel/FAT12.o \
 
 OBJS=\
-$(ARCHDIR)/crti.o \
+$(ARCHDIR)/crti.asmo \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
 $(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCHDIR)/crtn.asmo \
 
 LINK_LIST=\
-$(ARCHDIR)/crti.o \
+$(ARCHDIR)/crti.asmo \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
 $(LIBS) \
 $(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCHDIR)/crtn.asmo \
 
 .PHONY: all clean install install-headers install-kernel
 .SUFFIXES: .o .cpp .asm
+
+clean:
+	rm -f myos.bin
+	rm -f $(OBJS) *.o */*.o */*/*.o
+	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 myos.bin: $(OBJS) $(ARCHDIR)/linker.ld
 	$(CPP) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
@@ -73,13 +78,8 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 .c.o:
 	$(CPP) -MD -c -masm=intel $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
-.asm.o:
+%.asmo : %.asm
 	nasm -felf32 $< -o $@
-
-clean:
-	rm -f myos.bin
-	rm -f $(OBJS) *.o */*.o */*/*.o
-	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 install: install-headers install-kernel
 
@@ -89,4 +89,4 @@ install-headers:
 install-kernel: myos.bin
 	sh install_libs.sh
 
--include $(OBJS:.o=.d)
+#-include $(OBJS:.asmo=.asmd)

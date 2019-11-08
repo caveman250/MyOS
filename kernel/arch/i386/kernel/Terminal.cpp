@@ -69,7 +69,7 @@ namespace kernel
         else if(c == '\r')
         {
             m_Column = 0;
-            for(int i = 0; i < s_VGAWidth; ++i)
+            for (size_t i = 0; i < s_VGAWidth; ++i)
             {
                 PutChar(' ');
             }

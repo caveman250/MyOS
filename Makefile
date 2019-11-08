@@ -12,6 +12,7 @@ run: image
 	sh run_os.sh
 
 headers:
+	echo start
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers
 	cd kernel && SYSROOT=$(SYSROOT) $(MAKE) install-headers
 
