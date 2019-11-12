@@ -13,7 +13,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["relative", "${workspaceRoot}/kernel"],
+                "fileLocation": ["absolute"],
             }
         },
         {
@@ -26,7 +26,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["relative", "${workspaceRoot}/kernel"]
+                "fileLocation": ["absolute"],
             }
         },
         {
@@ -39,7 +39,7 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["relative", "${workspaceRoot}/kernel"],
+                "fileLocation": ["absolute"],
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "start",

@@ -1,3 +1,5 @@
+WORKINGDIR=$(shell pwd)
+
 PREFIX=/usr
 INCLUDEDIR=$(PREFIX)/include
 LIBDIR=$(PREFIX)/lib
@@ -14,19 +16,19 @@ CC = i686-elf-gcc -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
 ARCHDIR=arch/i386
 
 OBJS=\
-stdio/printf.o \
-stdio/putchar.o \
-stdio/puts.o \
-stdlib/abort.o \
-string/memcmp.o \
-string/memcpy.o \
-string/memmove.o \
-string/memset.o \
-string/strlen.o \
-string/strcmp.o \
-string/strchr.o \
-string/strcpy.o \
-string/strstr.o \
+$(WORKINGDIR)/stdio/printf.o \
+$(WORKINGDIR)/stdio/putchar.o \
+$(WORKINGDIR)/stdio/puts.o \
+$(WORKINGDIR)/stdlib/abort.o \
+$(WORKINGDIR)/string/memcmp.o \
+$(WORKINGDIR)/string/memcpy.o \
+$(WORKINGDIR)/string/memmove.o \
+$(WORKINGDIR)/string/memset.o \
+$(WORKINGDIR)/string/strlen.o \
+$(WORKINGDIR)/string/strcmp.o \
+$(WORKINGDIR)/string/strchr.o \
+$(WORKINGDIR)/string/strcpy.o \
+$(WORKINGDIR)/string/strstr.o \
 
 
 LIBK_OBJS=$(OBJS:.o=.libk.o)
