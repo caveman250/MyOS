@@ -9,8 +9,8 @@ CPPFLAGS = -D__is_kernel -Iinclude
 LIBS = -nostdlib -lk -lgcc
 
 SYSROOT? =
-CPP = i686-elf-g++ -g -O0 --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
-CC = i686-elf-gcc -g -O0 --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
+CPP = $(WORKINGDIR)/../cross_compiler/bin/i686-elf-g++ -g -O0 --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
+CC = $(WORKINGDIR)/../cross_compiler/bin/i686-elf-gcc -g -O0 --sysroot=$(SYSROOT) -isystem=$(PREFIX)/include
 
 ARCHDIR = arch/i386
 
@@ -68,6 +68,7 @@ clean:
 	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 myos.bin: $(OBJS) $(WORKINGDIR)/$(ARCHDIR)/linker.ld
+	echo $(WORKINGDIR)
 	$(CPP) -T $(WORKINGDIR)/$(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	grub-file --is-x86-multiboot myos.bin
 

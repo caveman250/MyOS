@@ -12,3 +12,4 @@ sysroot
 
 floppy.img
 nohup.out
+cross_compiler/*

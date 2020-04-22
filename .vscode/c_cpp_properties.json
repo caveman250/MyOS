@@ -4,12 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/ouchqt/opt/cross/lib/gcc/i686-elf/9.2.0/include/**"
+                "cross_compiler/src/gcc-9.3.0/include/**"
             ],
             "defines": [
                 "__STDC_HOSTED__=0"
             ],
-            "compilerPath": "/home/ouchqt/opt/cross/bin/i686-elf-g++",
+            "compilerPath": "cross_compiler/bin/i686-elf-g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x86"

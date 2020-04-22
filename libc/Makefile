@@ -10,8 +10,8 @@ LIBK_CFLAGS = $(CFLAGS)
 LIBK_CPPFLAGS = $(CPPFLAGS) -D__is_libk
 
 SYSROOT?=
-CPP = i686-elf-g++ -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
-CC = i686-elf-gcc -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
+CPP = $(WORKINGDIR)/../cross_compiler/bin/i686-elf-g++ -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
+CC = $(WORKINGDIR)/../cross_compiler/bin/i686-elf-gcc -g --sysroot=$(SYSROOT) -isystem=$(INCLUDEDIR)
 
 ARCHDIR=arch/i386
 
@@ -44,6 +44,7 @@ libk.a: $(LIBK_OBJS)
 	$(AR) rcs $@ $(LIBK_OBJS)
 
 .cpp.o:
+	echo $(WORKINGDIR)
 	$(CPP) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .cpp.libk.o:
