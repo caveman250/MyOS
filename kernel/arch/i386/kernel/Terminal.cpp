@@ -16,6 +16,9 @@ namespace kernel
 {
     Terminal Terminal::s_Instance;
 
+    static VGA::Colour s_BackgroundColour = VGA::Colour::BLUE;
+    static VGA::Colour s_ForegroundColour = VGA::Colour::LIGHT_GREY;
+
     Terminal::Terminal()
         : m_SerialPort(hal::SerialPort::SerialPortAddress::Com1)
         , m_Buffer(nullptr)
@@ -40,7 +43,7 @@ namespace kernel
         hal::HAL::Get().OutB(0x3D4, 0x0B);
         hal::HAL::Get().OutB(0x3D5, (hal::HAL::Get().InB(0x3D5) & 0xE0) | 15);
         
-        ClearScreen(VGA::CreateColour(VGA::Colour::GREEN, VGA::Colour::BLACK));
+        ClearScreen(VGA::CreateColour(s_ForegroundColour, s_BackgroundColour));
         SetHardwareCursorUpdateEnabled(true);
     }
 
@@ -334,7 +337,7 @@ namespace kernel
 		}
 		else if (strcmp(cmd_buf, "clear") == 0) 
 		{
-			Terminal::ClearScreen(VGA::CreateColour(VGA::Colour::GREEN, VGA::Colour::BLACK));
+			Terminal::ClearScreen(VGA::CreateColour(s_ForegroundColour, s_BackgroundColour));
 		}
 		else if(strcmp (cmd_buf, "help") == 0)
 		{

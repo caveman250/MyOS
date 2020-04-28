@@ -11,6 +11,9 @@ run_bochs: image
 run: image
 	sh run_os.sh
 
+run_debug: image
+	sh run_os.sh --debug
+
 headers:
 	echo start
 	cd libc && SYSROOT=$(SYSROOT) $(MAKE) install-headers

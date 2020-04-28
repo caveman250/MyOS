@@ -6,14 +6,20 @@
         {
             "type": "shell",
             "label": "Make",
-            "group": "build",
-            "command": "make",
+            
+            "command": "make -j24",
             "options": {
                 "cwd": "${workspaceRoot}"
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["absolute"],
+                "fileLocation": [
+                    "absolute"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
             }
         },
         {
@@ -26,26 +32,47 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["absolute"],
+                "fileLocation": [
+                    "absolute"
+                ]
             }
         },
         {
             "type": "shell",
             "label": "Run",
-            "isBackground": true,
-            "command": "make run",
+            "group": "build",
+            "command": "make run -j24",
             "options": {
                 "cwd": "${workspaceRoot}"
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["absolute"],
+                "fileLocation": [
+                    "absolute"
+                ]
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Run Debug",
+            "group": "build",
+            "isBackground": true,
+            "command": "make run_debug -j24",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "absolute"
+                ],
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "start",
                     "endsPattern": "finish"
-                },
+                }
             }
-        },
+        }
+
     ]
 }

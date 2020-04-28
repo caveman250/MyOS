@@ -8,7 +8,7 @@
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
-            "preLaunchTask": "Run",
+            "preLaunchTask": "Run Debug",
             "program": "${workspaceRoot}/kernel/myos.bin",
             "miDebuggerServerAddress": "localhost:1234",
             "args": [],
