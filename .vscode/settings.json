@@ -3,9 +3,11 @@
     "files.exclude": {
         "**/*.o": true,
         "**/*.bin": true,
-        ".vscode":true,
         "isodir":true,
-        "**/*.iso":true
+        "**/*.iso":true,
+        "cross_compiler":true,
+        "floppyImage":true,
+        "floppy.img":true
     },
     "files.associations": {
         "MEMCMP.C": "cpp",

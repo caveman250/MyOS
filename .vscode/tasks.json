@@ -58,6 +58,7 @@
             "group": "build",
             "isBackground": true,
             "command": "make run_debug -j24",
+            "dependsOn":["Make"],
             "options": {
                 "cwd": "${workspaceRoot}"
             },
