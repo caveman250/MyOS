@@ -12,6 +12,8 @@ The makefile and build scripts currently assume you are using a Unix like shell.
 ## GCC cross compiler:
 will need this to build. Follow the instructions at https://wiki.osdev.org/GCC_Cross-Compiler
 
+if you are running on Ubuntu you can simply use the "setup_cross_compiler.sh" script which will install any needed depndencies and build the compiler for you.
+
 ## QEMU
 Emulator used to run the OS, should be in your distros repositories.
 ## Bochs (Optional)
