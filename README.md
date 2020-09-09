@@ -1,7 +1,5 @@
 # MyOS
-Simple Operating system hobby project
-
-current lines of code: 7846 (keeping track for lols)
+Simple x86 Operating system hobby project
 
 # Trello
 https://trello.com/b/Lh08g5r6/myos
